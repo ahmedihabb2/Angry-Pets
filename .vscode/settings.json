@@ -1,0 +1,5 @@
+{
+    "masmtasm.dosbox.config": {
+        "CPU.cycles": "max"
+    }
+}
