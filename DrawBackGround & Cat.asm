@@ -132,9 +132,11 @@
 	        DB  31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31
 	        DB  31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31
 	        DB  31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31
-​
-​xCoord dw ?
+​;;Cat Moving Variables
+​	 xCoord dw ?
 	yCoord dw  ?
+                                                                                	;detect if the player is falling or not
+
 .CODE
 MAIN PROC FAR
 	               MOV  AX,@data
@@ -176,7 +178,7 @@ MAIN PROC FAR
 	               int  16h
 	               call DrawBackGround
 	               call DrawCat
-	               call delay
+	               ;;call delay
 	               jmp  CHECK
 
 	MoveUp:        
