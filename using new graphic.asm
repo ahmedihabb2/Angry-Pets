@@ -99,6 +99,9 @@ MAIN PROC FAR
 	                 cmp  ah,77
 	                 jz   MoveRight
 
+					 cmp al, 32
+					 jz JUMPUP
+
 	ReadKey:         
 	                 mov  ah,0
 	                 int  16h
@@ -126,6 +129,9 @@ MAIN PROC FAR
 	MoveRight:       
 	                 add  xCoord , 6
 	                 jmp  ReadKey
+	JUMPUP:
+                    sub yCoord , 46
+                    jmp ReadKey
 	ENDING:          
 MAIN ENDP
 
@@ -157,7 +163,44 @@ DrawBackGround proc
 	                 MOV  CX,0
 	                 CMP  DX,146
 	                 JNZ  FILL3
-	                 JMP  SCREENBOTTOM
+	;Drawing Steps
+	STEP1: ;first step on the left
+                mov dx, 106
+        Start1:  mov cx, 50
+                mov al, 6
+                mov ah, 0Ch
+        StepDraw1: int 10h
+                inc cx
+                cmp cx, 125
+                jnz StepDraw1
+                DEC dx
+                cmp dx, 102
+                jnz Start1
+    STEP2: ;second step on the right
+                mov dx, 106
+        Start2:  mov cx, 200
+                mov al, 6
+                mov ah, 0Ch
+        StepDraw2: int 10h
+                inc cx
+                cmp cx, 275
+                jnz StepDraw2
+                DEC dx
+                cmp dx, 102
+                jnz Start2
+
+    STEP3: ;Top Step
+                mov dx, 70
+        Start3:  mov cx, 115
+                mov al, 6
+                mov ah, 0Ch
+        StepDraw3: int 10h
+                inc cx
+                cmp cx, 210
+                jnz StepDraw3
+                DEC dx
+                cmp dx, 66
+                jnz Start3
 	;;;Draw Bottom of the image
 	SCREENBOTTOM:    
 	                 MOV  CX ,0
