@@ -4,6 +4,8 @@
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	cat_W              equ 25
 	cat_H              equ 25
+	heart_W			   equ 15
+	heart_H			   equ 15
 	cat_img           DB 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 22, 22, 22, 22, 20, 19, 22, 19 
  DB 22, 20, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18, 20, 24, 24, 24, 28, 29, 29, 29, 24, 23, 27, 21, 29, 22, 16, 16, 16, 16, 16, 16, 16, 16, 16, 19, 25, 26, 24 
  DB 20, 20, 28, 29, 29, 28, 24, 24, 28, 21, 29, 24, 18, 16, 16, 16, 16, 16, 16, 16, 16, 22, 28, 25, 20, 16, 17, 28, 29, 29, 27, 23, 28, 28, 21, 29, 28, 224, 16, 16 
@@ -28,7 +30,7 @@
  DB 12, 87, 12, 110, 225, 24, 129, 110, 12, 12, 12, 12, 109, 12, 12, 12, 87, 12, 202, 129, 16, 128, 204, 12, 12, 12, 134, 129, 204, 12, 63, 12, 134, 201, 16, 16, 16, 129, 134, 12 
  DB 134, 227, 23, 152, 204, 133, 133, 227, 24, 16, 16, 16, 23, 228, 201, 226, 23, 16, 24, 152, 201, 202, 24, 16, 16
 
- 
+
 ​                                                                                                                                                                                     		;;Cat Moving Variables
 ​ xCoord dw ?
 	yCoord             dw  ?
@@ -57,6 +59,7 @@ MAIN PROC FAR
 	                 mov  xCoord , BX
 	                 mov  yCoord , 115
 	                 call DrawCat
+					 call DrawHeart
 					 ;call CharacterGravity
 
 
@@ -307,5 +310,35 @@ waitForNewVR PROC
  	 RET
 waitForNewVR ENDP
 
+DrawHeart proc
+	                 push ax
+	                 MOV  AH,0Bh
+	                 MOV  CX, heart_W
+	                 MOV  DX, heart_H
+	                 mov  DI, offset heart_img
+	                 jmp  StartHeart
+	Drawalb:         
+	                 MOV  AH,0Ch
+	                 mov  al, [DI]
+	                 CMP  al,16
+	                 JZ   StartHeart
+	                 MOV  BH,00h
+	                 add  cx,60
+	                 add  dx,102-heart_H
+	                 INT  10h
+	                 sub  cx , 60
+	                 sub  dx , 102-heart_H
+	StartHeart:        
+	                 inc  DI
+	                 DEC  Cx
+	                 JNZ  Drawalb
+	                 mov  Cx, heart_W
+	                 DEC  DX
+	                 JZ   ENDINGHeart
+	                 Jmp  Drawalb
 
+	ENDINGHeart:       
+	                 pop  ax
+	                 ret
+DrawHeart Endp
 END MAIN
