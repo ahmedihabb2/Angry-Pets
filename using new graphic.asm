@@ -39,7 +39,14 @@
 	LandLine           dw  142d
 	firststepline      dw  105d
 	GravityAccleration dw  2d
-	isFalling          dw  0                                                                                                                                                              	;detect if the player is falling or not
+	isFalling          dw  0 
+	;----- HealthBar variables    
+	HealthBarPos                      db          '$'
+	temp_cx_HealthBar                 dw          '$'
+	temp2_cx_HealthBar                dw          '$'
+	temp_dx_HealthBar                 dw          '$'
+	temp_cx_HealthFillingBar           dw         '$'
+	temp2_cx_HealthFillingBar          dw         '$'                                                                                                                                                         	;detect if the player is falling or not
 
 .CODE
 MAIN PROC FAR
@@ -51,15 +58,26 @@ MAIN PROC FAR
 	;;Draw Color Background
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;
-						call waitForNewVR
-	                 call DrawBackGround
+					call waitForNewVR
+	                call DrawBackGround
+
+	; Drawing health bars
+                    mov HealthBarPos, 'F'   ; stands for first player's health bar
+                    call Draw_Health_Bar 
+                   
+                    
+                    mov HealthBarPos, 'S'   ; stands for second player's health bar
+                    call Draw_Health_Bar     
+                   
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	CatDrawing:      
-	                 mov  BX , 0
-	                 mov  xCoord , BX
-	                 mov  yCoord , 115
-	                 call DrawCat
-					 call DrawHeart
+	                mov  BX , 0
+	                mov  xCoord , BX
+	                mov  yCoord , 115
+	                
+					call DrawHeart
+					
+					 
 					 ;call CharacterGravity
 
 
@@ -88,7 +106,12 @@ MAIN PROC FAR
 	                 int  16h
 					 call waitForNewVR
 	                 call DrawBackGround
-	                 call DrawCat
+					 mov HealthBarPos, 'F'   ; stands for first player's health bar
+                     call Draw_Health_Bar 
+                     mov HealthBarPos, 'S'   ; stands for second player's health bar
+                     call Draw_Health_Bar     
+                     call DrawCat
+	                ; call DrawCat
 					 call CharacterGravity
 					 call delay
 	                 jmp  CHECK
@@ -276,6 +299,10 @@ CharacterGravity proc
 	                 Jge   ENDMOVING
 					 call waitForNewVR
 					 call DrawBackGround            ;;Remove the old position
+					  mov HealthBarPos, 'F'   ; stands for first player's health bar
+                     call Draw_Health_Bar 
+                     mov HealthBarPos, 'S'   ; stands for second player's health bar
+                     call Draw_Health_Bar  
 					 call DrawCat                   ;;Draw with new onw
 					 jmp MOVINGPLAYERDOWN
 
@@ -341,4 +368,71 @@ DrawHeart proc
 	                 pop  ax
 	                 ret
 DrawHeart Endp
+
+Draw_Health_Bar PROC 
+; ---------------------------------- Backcolor of health bar------------------------------
+
+                mov al,0h ; backcolor of the bar 
+                mov ah,0ch   
+
+                ; position of 1st player's health bar 
+                mov cx,20 
+                mov dx,9
+            
+                cmp HealthBarPos, 70  ; if it is for the first player then jump to temp
+                Je temp 
+
+                ; else update x position for the 2nd player's health bar                          
+                mov cx, 250
+    
+                ; store values of cx, dx to loop on them according to which player's health bar is being drawn
+    temp:
+                mov temp_cx_HealthBar, cx
+                mov temp2_cx_HealthBar, cx ; stores the original value of cx, before updating it
+                add temp_cx_HealthBar, 50
+                mov temp_dx_HealthBar, dx
+                add temp_dx_HealthBar, dx
+                add temp_dx_HealthBar, 2
+
+    BarBackDrawing:
+                inc cx
+                int 10h
+                cmp cx, temp_cx_HealthBar
+                JNE BarBackDrawing
+                mov cx, temp2_cx_HealthBar  
+                inc dx      
+                cmp dx, temp_dx_HealthBar
+                JNE BarBackDrawing
+
+;-------------------------------- Filling the bar with greencolor ------------------------------
+                mov al,02h  ; defult green color for the filling of the bar
+                mov ah,0ch   
+
+                ; position of 1st player's health bar 
+                mov cx, 21
+                mov dx,10
+                cmp HealthBarPos, 70  ; if it is for the first player then jump to temp
+                Je tempFilling
+
+                ; else update x position for the 2nd player's health bar                          
+                mov cx, 251
+    
+                ; store values of cx, dx to loop on them according to which player's health bar is being drawn
+    tempFilling:
+                mov temp_cx_HealthFillingBar, cx
+                mov temp2_cx_HealthFillingBar, cx ; stores the original value of cx, before updating it
+                add temp_cx_HealthFillingBar, 48
+
+               BarFilling:
+                inc cx
+                int 10h
+                cmp cx, temp_cx_HealthFillingBar ;69
+                JNE BarFilling
+                mov cx,temp2_cx_HealthFillingBar ; 21 
+                inc dx      
+                cmp dx, 19
+                JNE BarFilling
+RET
+Draw_Health_Bar ENDP
+
 END MAIN
