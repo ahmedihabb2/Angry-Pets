@@ -53,6 +53,7 @@ fish_W equ 20  ; fish width
 	dog_H   equ 25  ;dog height
 	xd dw ?  ; dog x coordinate
     yd dw ?  ; dog y coordinate
+	ybelow_dog dw ?  ; dog y coordinate (below)
 	dog_img DB 16, 16, 16, 16, 16, 16, 183, 137, 164, 24, 24, 24, 23, 159, 136, 16, 16, 17, 135, 23, 162, 160, 183, 183, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 183, 139, 66, 66, 89 
 	DB 30, 31, 30, 30, 22, 183, 183, 209, 26, 0, 31, 24, 25, 26, 230, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 209, 65, 66, 66, 66, 66, 26, 163, 160, 22, 24, 160, 136, 65, 66 
 	DB 65, 137, 24, 25, 234, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 137, 66, 66, 66, 66, 66, 30, 29, 23, 23, 27, 24, 138, 66, 66, 24, 137, 139, 138, 17, 16, 16, 16, 16, 16 
@@ -705,17 +706,24 @@ DrawDog	   proc
 DrawDog	  endp  
 ;;;;;;;;;;;;;;;;;;;; Cat Hits The Dog  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 CatHitDog proc
+; initial draw for the fish 
                    mov BX , xCoord
-	               add BX, cat_W  ; start position x for the fish
+	               add BX, 10 ; start position x for the fish
 	               mov DX, yCoord ; start position y for the fish
 	               mov  xf , BX
 	               mov  yf , DX
 	               call DrawFish 
 				   mov cx, yd ; y above coordiante of the dog
-				   sub cx, dog_W ; y below coordiante of the dog (Y above - dog width)
-				   ; push cx   
-			repeat:
-				    inc xf   ;fish position x
+				   sub cx, dog_W ; (Y above - dog width)
+				   mov ybelow_dog ,cx ; y below coordiante of the dog 
+; loop for fish movement till it hits the dog or reaches end of the screen				    
+			repeat: 
+			        ; determine direction of the hit
+                    mov bx , xCoord
+			        cmp bx ,xd ; compare xdog with x cat 
+					jb increase_Xfish ; if Xcat < Xdog increase fish position x	
+					dec xf            ; if Xcat > Xdog decrease fish position x	
+	 continue_draw:
 				    mov bx, xf ; store fish position x in bx 
 					mov dx, xd ; postion of colliosion (X Dog-10)
 					sub dx,10 ; stop point
@@ -724,30 +732,33 @@ CatHitDog proc
 					; re draw all screen componenets including the fish
 					call waitForNewVR
 					;call delay2
-					call UpdatedBackground
-					  
+					call UpdatedBackground  
 					call DrawDog
 					call DrawCat
 					call DrawFish 
 					pop bx
 					pop dx
-					;pop cx
-					cmp dx,bx ; reaches dog position?
-					;je check_Yabove
-                   ; continuee:		; if not 	
-				   jz finish	
-					mov ax, 305 ; end of the screen
+					cmp dx,bx ; reaches dog x position?
+					je check_Ybelow ; make sure it matches y position too!
+                    continuee:	; if not continue looping		
+					mov ax, 300 ; end of the screen
 					cmp bx, ax  ; the fish reaches end of the screen?
 					jz finish ; end of the loop
 			     	loop repeat 
+
             finish: ret  
 
-			;check_Yabove: cmp bx, cx ; check Yfish >= y above ?
-			;	          jbe check_Ybelow ; if yes: check Yfish <= y below ?
-			;			  jmp continuee  ; if no
-			;check_Ybelow: cmp bx, yd ; check y below
-             ;             jae finish ; if yes (cat hits the dog )
-			;			  jmp continuee  ; if no
+			check_Ybelow: mov cx, yf ; store y fish in cx
+			              cmp cx, ybelow_dog ; check Yfish >= y below ?
+				          jae check_Yabove ; if yes: check Yfish <= y below ?
+						  jmp continuee  ; if no
+			check_Yabove: cmp cx, yd; check Yfish <= y above?
+                          jbe finish ; if yes (cat hits the dog )
+						  jmp continuee  ; if no
+						     
+			increase_Xfish: inc xf  
+			               jmp continue_draw 			 
+
 CatHitDog endp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  
