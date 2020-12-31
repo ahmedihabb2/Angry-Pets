@@ -6,6 +6,16 @@
 	cat_H                     equ 25
 	heart_W                   equ 15
 	heart_H                   equ 15
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PowerUps;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    PowerUpsYpos              DW 100, 64   ;100 for step 1, 2 ; 64 for step 3
+    steps_to_draw_powerUps    DW 0, 1, 2, 3 ;if 0 then nothing will be drawn
+    RandomXpos_Step1          DW 60, 80, 110, 70
+    RandomXpos_Step2          DW 200, 220, 250, 260
+    RandomXpos_Step3          DW 120, 150, 190, 170
+    heart_powerupX            DW ?
+    heart_powerupY            DW ?
+    draw_PowerUp              DB 1
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;End Power Ups;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	xCoord dw ? ;  cat x coordinate
 	yCoord dw  ? ;  cat y coordinate
 	cat_img                   DB  16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 22, 22, 22, 22, 20, 19, 22, 19
@@ -129,14 +139,15 @@ MAIN PROC FAR
 	                    mov  HealthBarPos, 'S'            	; stands for second player's health bar
 	                    call Draw_Health_Bar
 						inc HealthBarDrawn                   ; to indicate that it has been drawn once
-
+						call GenerateRandomNumber
+                        call DrawHeart
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	CatDrawing:         
 	                    mov  BX , 0
 	                    mov  xCoord , BX
 	                    mov  yCoord , 115
 						call DrawCat
-	                    call DrawHeart
+	                    
 
 	DogDrawing:	
 						mov BX , 200
@@ -176,7 +187,7 @@ MAIN PROC FAR
 	                    int  16h
 	                    call waitForNewVR
 	                    call UpdatedBackground
-						
+						call DrawHeart
 	                    ; mov  HealthBarPos, 'F'            	; stands for first player's health bar
 	                    ; call Draw_Health_Bar
 	                    ; mov  HealthBarPos, 'S'            	; stands for second player's health bar
@@ -186,7 +197,7 @@ MAIN PROC FAR
 	                    call DrawDog
 						
 	                    call CharacterGravity
-	                    call delay
+	                    ;call delay
 	                    jmp  CHECK
 
 	MoveUp:             
@@ -414,10 +425,11 @@ CharacterGravity proc
 	                    CMP  AX,LandLine             ;;if the character reaches the ground we stop the gravity effect , else it continue to fall        	
 	                    Jge  ENDMOVING
 	                    call waitForNewVR
-	                    call UpdatedBackground            	
+	                    call UpdatedBackground    
+						call DrawHeart        	
 	                    call DrawCat                      	
 	                    call DrawDog
-	                    call delay2                       	
+	                    ;call delay2                       	
 	                    jmp  MOVINGPLAYERDOWN
 					 
 CHECKBEFOREEND:     ;;This label is for checking if the cat at the X coordinates of the step or not (for first two steps)
@@ -450,9 +462,10 @@ ENDMOVING:
 
 	LANDONSTEP:         call waitForNewVR
 	                    call UpdatedBackground            	;;Remove the old position
+						call DrawHeart
 	                    call DrawCat                      	;;Draw with new onw
 	                    call DrawDog
-	                    call delay2                       	;;Draw with new onw
+	                    ;call delay2                       	;;Draw with new onw
 	                    MOV  AX , GravityAccleration
 	                    ADD  yCoord , AX
 	                    MOV  AX , yCoord
@@ -463,9 +476,10 @@ ENDMOVING:
 
 	LANDONSTEP2:        call waitForNewVR
 	                    call UpdatedBackground            	;;Remove the old position
+						call DrawHeart
 	                    call DrawCat                      	;;Draw with new onw
 	                    call DrawDog
-	                    call delay2                       	;;Draw with new onw
+	                    ;call delay2                       	;;Draw with new onw
 	                    MOV  AX , GravityAccleration
 	                    ADD  yCoord , AX
 	                    MOV  AX , yCoord
@@ -498,23 +512,49 @@ waitForNewVR PROC
 waitForNewVR ENDP
 
 DrawHeart proc
+
+
 	                    push ax
+        CheckYpos1:     mov ax,yCoord
+                        cmp heart_powerupY, ax
+                        jl  DidnotTake
+        CheckYpos2:     add ax,cat_H
+                        cmp heart_powerupY, ax
+                        jg  DidnotTake
+        CheckXpos1:     mov ax,xCoord
+                        cmp heart_powerupX, ax
+                        jl  DidnotTake
+        CheckXpos2:     add ax,cat_W
+                        cmp heart_powerupX, ax
+                        jg  DidnotTake
+        took:
+                        call GenerateRandomNumber
+        DidnotTake:
+                        cmp draw_PowerUp, 0
+                        jz ENDINGHeart
+        
 	                    MOV  AH,0Bh
 	                    MOV  CX, heart_W
 	                    MOV  DX, heart_H
 	                    mov  DI, offset heart_img
+                        
 	                    jmp  StartHeart
+                        
 	Drawalb:            
 	                    MOV  AH,0Ch
 	                    mov  al, [DI]
 	                    CMP  al,16
 	                    JZ   StartHeart
 	                    MOV  BH,00h
-	                    add  cx,60
-	                    add  dx,102-heart_H
+	                    add  cx,heart_powerupX
+                        sub dx, heart_W
+	                    add  dx,heart_powerupY
+                       
 	                    INT  10h
-	                    sub  cx , 60
-	                    sub  dx , 102-heart_H
+	                    sub  cx , heart_powerupX
+                        add dx, heart_W
+	                    sub  dx , heart_powerupY
+                        
 	StartHeart:         
 	                    inc  DI
 	                    DEC  Cx
@@ -524,10 +564,11 @@ DrawHeart proc
 	                    JZ   ENDINGHeart
 	                    Jmp  Drawalb
 
-	ENDINGHeart:        
+	ENDINGHeart:        mov draw_PowerUp , 1
 	                    pop  ax
 	                    ret
 DrawHeart Endp
+
 
 
  Draw_Health_Bar PROC 
@@ -778,6 +819,7 @@ CatHitDog proc
 					call waitForNewVR
 					;call delay2
 					call UpdatedBackground  
+					call DrawHeart
 					call DrawDog
 					call DrawCat
 					call DrawFish 
@@ -812,7 +854,78 @@ CatHitDog proc
 
 CatHitDog endp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PowerUps;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+GenerateRandomNumber proc 
+mov ah,0h ; interrupts to get system time
+
+int 1ah ; CX:DX now hold number of clock ticks since midnight
+
+mov ax,dx
+
+xor dx,dx
+
+mov cx,7
+
+div cx ; here dx contains the remainder of the division - from 0 to 6
+mov cx, 2
+mov bx, dx
+mov ax, dx
+xor dx,dx
+div cx
+cmp dx, 1
+jne evenNum
+add bx,1
+evenNum:
+
+mov dx,bx
+
+mov bx, offset steps_to_draw_powerUps
+add bx, dx
+mov ax, [bx]
+cmp ax, 3
+jz DrawOnStep3
+cmp ax, 2
+jz DrawOnStep2
+cmp ax, 1
+jz DrawOnStep1
+cmp ax, 0
+jz DontDraw  
+DrawOnStep3:
+    mov bx, offset PowerUpsYpos
+    add bx, 2
+    mov ax, [bx]
+    mov heart_powerupY, ax
+    mov bx, offset RandomXpos_Step3
+    add bx, dx
+    mov ax, [bx]
+    mov heart_powerupX, ax
+    jmp ENDRANDOM
+
+DrawOnStep2:
+    mov bx, offset PowerUpsYpos
+    mov ax, [bx]
+    mov heart_powerupY, ax
+    mov bx, offset RandomXpos_Step2
+    add bx, dx
+    mov ax, [bx]
+    mov heart_powerupX, ax
+    jmp ENDRANDOM
+DrawOnStep1:
+    mov bx, offset PowerUpsYpos
+    mov ax, [bx]
+    mov heart_powerupY, ax
+    mov bx, offset RandomXpos_Step1
+    add bx, dx
+    mov ax, [bx]
+    mov heart_powerupX, ax
+    jmp ENDRANDOM
+DontDraw:
+    mov draw_PowerUp, 0
+ENDRANDOM:
+ret
+GenerateRandomNumber Endp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 END MAIN
