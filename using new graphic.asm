@@ -91,20 +91,23 @@ fish_W equ 20  ; fish width
 	temp_dx_HealthBar                  dw          '$'
 	temp_cx_HealthFillingBar           dw          '$'
 	temp2_cx_HealthFillingBar          dw          '$'
-	HealthBarDrawn                     dw           0    ;to make sure that its drawn only once            
 
 	; save the location of the health of 1st player
 	Player1_Health_cx                  dw          '$'     
-	Player1_Health_dx                  dw          '$'
 	; save the location of the health of 2nd player
 	Player2_Health_cx                  dw          '$'     
-	Player2_Health_dx                  dw          '$'
+
 
 	Player1_DecHealth                  dw           0     ; If 1st player got hit   
 	Player2_DecHealth                  dw           0     ; If 2nd player got hit 
 
 	Player2_IncHealth                  dw           0     ; If 1st player got powerup   
 	Player1_IncHealth                  dw           0     ; If 2nd player got powerup 
+	HealthBarDrawn                     dw           0    ;to make sure that its drawn only once            
+	countHB1                           dw           0
+	countHB2                           dw           0
+
+	;-----------------------------------
 .CODE
 MAIN PROC FAR
 	                    MOV  AX,@data
@@ -125,7 +128,8 @@ MAIN PROC FAR
                     
 	                    mov  HealthBarPos, 'S'            	; stands for second player's health bar
 	                    call Draw_Health_Bar
-                   
+						inc HealthBarDrawn                   ; to indicate that it has been drawn once
+
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	CatDrawing:         
 	                    mov  BX , 0
@@ -525,21 +529,21 @@ DrawHeart proc
 	                    ret
 DrawHeart Endp
 
-Draw_Health_Bar PROC 
 
-;------------------- check whether the player has been hit?
+ Draw_Health_Bar PROC 
 
-                cmp HealthBarPos, 83   
-                je SecondPlayerTest 
+;------------------- check whether the 1st player has been hit?
+                 cmp Player1_DecHealth,0 ; no hits
+                 je SecondPlayerTest   
+
+;------------------- check whether the 1st player is the loser?
+                sub Player1_Health_cx,1
+                cmp Player1_Health_cx, 21
+                ja decHealth1
+                jmp FinishHealthBar
+  
                 
-                cmp Player1_DecHealth,0 ; no hits
-                je draw_HB   ; draw the healthbar 
-                jnz decHealth1 
-
-
-;-------------------------------- Decrease the health ------------------------------
-decHealth1:
-               sub Player1_Health_cx,1
+ decHealth1:
                 mov cx, Player1_Health_cx
                 mov dx,10
                 mov al,04 ;Pixel color
@@ -548,37 +552,63 @@ decHealth1:
                 inc dx
                 cmp dx,19
                 jnz decP1
-                jmp FinishHealthBar
-
+                Inc countHB1    ;for only doubling the value to decrease 
+                cmp countHB1,2
+                jb doubleHB1
+                jmp countinueHB
+                
+                doubleHB1: dec Player1_Health_cx 
+                jmp decHealth1
+                countinueHB:
+                mov countHB1,0
+               
+;------------------- check again whether the 1st player is the loser now?
+                cmp Player1_Health_cx, 21
+                jbe ReFinish  
+   
+;------------------------------- check whether the 2nd player has been hit? ----------------------
 SecondPlayerTest:
-                cmp Player2_DecHealth,0 ; no hits
-                je draw_HB   ; draw the healthbar 
-               ; jnz decHealth2 
+                
+                 cmp Player2_DecHealth,0 
+                 je check_draw_HB  
+
+;------------------- check whether the 2nd player is the loser?
+                   sub Player2_Health_cx,1
+                   cmp Player2_Health_cx, 251
+                   jbe ReFinish  
 
  decHealth2:
-                sub Player2_Health_cx,1
+                 
                 mov cx, Player2_Health_cx
                 mov dx,10
-                mov al,04 ;Pixel color
-                mov ah,0ch ;Draw Pixel Command
+                mov al,04       
+                mov ah,0ch 
                 decP2: int 10h
                 inc dx
                 cmp dx,19
                 jnz decP2
-                jmp FinishHealthBar
+                Inc countHB2
+                cmp countHB2,2
+                jb doubleHB2
+                jmp countinueHB2
+                
+                doubleHB2: dec Player2_Health_cx 
+                jmp decHealth2
+                countinueHB2:
+                mov countHB2,0
 
-;check whether the player pick a powerup or not
-;cmp Player1_IncHealth,1
-;je IncHealth1 
-;cmp Player2_IncHealth,1
-;je IncHealth1 
+;------------------- check again whether the 2nd player is the loser?
+                  cmp Player2_Health_cx, 251
+                  jbe ReFinish 
 
-draw_HB:   ; to make sure that it is drawn once
+;----------------------------------to make sure that it is drawn once ------------------      
+check_draw_HB:  
                 mov ax, HealthBarDrawn
                 cmp ax,0
                 je DrawFirst 
-                RET
-                
+
+
+ReFinish: jmp FinishHealthBar
 ; ---------------------------------- Backcolor of health bar------------------------------
 DrawFirst:
                 mov al,0h ; backcolor of the bar 
@@ -642,25 +672,16 @@ DrawFirst:
                 cmp dx, 19
                 JNE BarFilling
 
-                ; save locations
-                cmp HealthBarPos, 70  ;first player
-                je save1
-                mov cx, temp_cx_HealthFillingBar
-                inc cx
-                mov Player2_Health_cx, cx
-                mov Player2_Health_dx, dx
-                jmp FinishHealthBar 
-                save1:
-                mov cx, temp_cx_HealthFillingBar
-                inc cx
-                mov Player1_Health_cx,cx
-                mov Player1_Health_dx, dx
-                jmp FinishHealthBar
-
-
+             mov Player1_Health_cx,70
+             mov Player2_Health_cx,300
 
 FinishHealthBar:
+             mov  Player2_DecHealth,0
+             mov  Player1_DecHealth,0
+
+
 RET
+
 Draw_Health_Bar ENDP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  Draw Fish ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -777,11 +798,17 @@ CatHitDog proc
 				          jae check_Yabove ; if yes: check Yfish <= y below ?
 						  jmp continuee  ; if no
 			check_Yabove: cmp cx, yd; check Yfish <= y above?
-                          jbe finish ; if yes (cat hits the dog )
+                          jbe decHealthDogDone ; if yes (cat hits the dog )
 						  jmp continuee  ; if no
 						     
 			increase_Xfish: inc xf  
-			               jmp continue_draw 			 
+			               jmp continue_draw 	
+
+						decHealthDogDone: 	
+ 						mov   Player2_DecHealth,1 ;dec health of dog 
+                   		call Draw_Health_Bar
+						jmp finish     
+						  					   		 
 
 CatHitDog endp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
