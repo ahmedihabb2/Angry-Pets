@@ -808,7 +808,7 @@ CatHitDog proc
                     mov bx , xCoord
 			        cmp bx ,xd ; compare xdog with x cat 
 					jb increase_Xfish ; if Xcat < Xdog increase fish position x	
-					dec xf            ; if Xcat > Xdog decrease fish position x	
+					sub xf , 4           ; if Xcat > Xdog decrease fish position x	
 	 continue_draw:
 				    mov bx, xf ; store fish position x in bx 
 					mov dx, xd ; postion of colliosion (X Dog-10)
@@ -830,7 +830,7 @@ CatHitDog proc
                     continuee:	; if not continue looping		
 					mov ax, 300 ; end of the screen
 					cmp bx, ax  ; the fish reaches end of the screen?
-					jz finish ; end of the loop
+					jae finish ; end of the loop
 			     	loop repeat 
 
             finish: ret  
@@ -843,7 +843,7 @@ CatHitDog proc
                           jbe decHealthDogDone ; if yes (cat hits the dog )
 						  jmp continuee  ; if no
 						     
-			increase_Xfish: inc xf  
+			increase_Xfish: add xf, 4  
 			               jmp continue_draw 	
 
 						decHealthDogDone: 	
