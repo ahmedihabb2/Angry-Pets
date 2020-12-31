@@ -394,60 +394,84 @@ delay2 Endp
 
 
 CharacterGravity proc
-
+;;yCoord represents the y coordinate of the character (at his leg)
 	MOVINGPLAYERDOWN:   
-					
-	                    MOV  AX , GravityAccleration
-	                    ADD  yCoord , AX                  	;;Add the garvity value yCoordinate of the character
+	                    MOV  AX , yCoord                 
+						add  AX , cat_H
+						CMP  AX , secondstepline     ;;Check if the cat body is above than the second step
+						JLE  CHECKBEFOREENDSTEP2     ;;if yes jump to this label to make cat land at this step or fall if the cat is not in same x Coord of the step
+						SUB  AX , cat_H  
+	                    CMP  AX , firststepline      ;;Same as the above
+	                    JLE  CHECKBEFOREEND               	
+	CONTMOVING:         MOV  AX , GravityAccleration  ;;if the character jumps on the air he should fall to the ground and this label is responsible for that
+	                    ADD  yCoord , AX                  	
 	                    MOV  AX , yCoord
-	                    add  AX , cat_H                   	;;add the ycoord and the height of character to AX to check
-	                    CMP  AX , firststepline
-	                    jge  CHECKBEFOREEND
-	                    CMP  AX , secondstepline
-	                    JgE  CHECKBEFOREENDSTEP2
-	CONTMOVING:         CMP  AX,LandLine                  	;;if they are greater or equal to the landline (ground)
+	                    add  AX , cat_H
+	                    CMP  AX,LandLine             ;;if the character reaches the ground we stop the gravity effect , else it continue to fall        	
 	                    Jge  ENDMOVING
 	                    call waitForNewVR
-	                    call UpdatedBackground               	;;Remove the old position
-	                    call DrawCat                      	;;Draw with new onw
-						call DrawDog
-	                    call delay2                       	;;Draw with new onw
+	                    call UpdatedBackground            	
+	                    call DrawCat                      	
+	                    call DrawDog
+	                    call delay2                       	
 	                    jmp  MOVINGPLAYERDOWN
 					 
-
-
-ENDMOVING:
-	                    MOV  AX , GravityAccleration
-	                    sub  yCoord , AX
-	                    ret
-	CHECKBEFOREEND:     
+CHECKBEFOREEND:     ;;This label is for checking if the cat at the X coordinates of the step or not (for first two steps)
 	                    MOV  BX , xCoord
 	                    CMP  BX ,35
 	                    JGE  SECONDCHECK
 	                    JMP  CONTMOVING
-						ret
 	SECONDCHECK:        CMP  BX,125
-	                    JLE  ENDMOVING
+	                    JLE  LANDONSTEP    ;;if the character between x Coordinates of the first step we jump to this label in order to make the character lands on step
 	                    JMP  CHECKBEFOREEND2
 	CHECKBEFOREEND2:    MOV  BX , xCoord
 	                    CMP  BX ,190
 	                    JGE  SECONDCHECK2
 	                    JMP  CONTMOVING
 	SECONDCHECK2:       CMP  BX,275
-	                    JLE  ENDMOVING
+	                    JLE  LANDONSTEP   ;;if the character between x Coordinates of the second step we jump to this label in order to make the character lands on step
 	                    JMP  CONTMOVING
-	CHECKBEFOREENDSTEP2:
-	                    MOV  BX , xCoord
-	                    CMP  BX ,100
+	;;This label is for checking if the cat at the X coordinates of the third step 
+	CHECKBEFOREENDSTEP2: MOV  BX , xCoord
+	                    CMP  BX ,80
 	                    JGE  SECONDCHECKSTEP2
 	                    JMP  CONTMOVING
-	SECONDCHECKSTEP2:   CMP  BX,200
-	                    JLE  ENDMOVING
+	SECONDCHECKSTEP2:   CMP  BX,210
+	                    JLE  LANDONSTEP2 ;;if the character between x Coordinates of the above step we jump to this label in order to make the character lands on step
 	                    JMP  CONTMOVING
+ENDMOVING:
+	                    MOV  AX , GravityAccleration
+	                    sub  yCoord , AX
+	                    ret
 
+	LANDONSTEP:         call waitForNewVR
+	                    call UpdatedBackground            	;;Remove the old position
+	                    call DrawCat                      	;;Draw with new onw
+	                    call DrawDog
+	                    call delay2                       	;;Draw with new onw
+	                    MOV  AX , GravityAccleration
+	                    ADD  yCoord , AX
+	                    MOV  AX , yCoord
+	                    add  AX , cat_H
+	                    CMP  AX,firststepline             	;;if they are greater or equal to the landline (ground)
+	                    Jge  ENDMOVING
+	                    JMP  LANDONSTEP
+
+	LANDONSTEP2:        call waitForNewVR
+	                    call UpdatedBackground            	;;Remove the old position
+	                    call DrawCat                      	;;Draw with new onw
+	                    call DrawDog
+	                    call delay2                       	;;Draw with new onw
+	                    MOV  AX , GravityAccleration
+	                    ADD  yCoord , AX
+	                    MOV  AX , yCoord
+	                    add  AX , cat_H
+	                    CMP  AX,secondstepline           	;;if they are greater or equal to the landline (ground)
+	                    Jge  ENDMOVING
+	                    JMP  LANDONSTEP2
+	
 
 CharacterGravity Endp
-
 
 waitForNewVR PROC
 
