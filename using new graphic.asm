@@ -171,19 +171,22 @@ MAIN PROC FAR
 	                    int  16h
 	                    call waitForNewVR
 	                    call UpdatedBackground
+						
 	                    ; mov  HealthBarPos, 'F'            	; stands for first player's health bar
 	                    ; call Draw_Health_Bar
 	                    ; mov  HealthBarPos, 'S'            	; stands for second player's health bar
 	                    ; call Draw_Health_Bar
 	                    call DrawCat
+						
 	                    call DrawDog
+						
 	                    call CharacterGravity
 	                    call delay
 	                    jmp  CHECK
 
 	MoveUp:             
 	          
-	                    sub  yCoord,15
+	                    sub  yCoord,6
 	                    jmp  ReadKey
 
 	MoveDown:           
@@ -282,7 +285,7 @@ DrawBackGround proc
 	SCREENBOTTOM:       
 	                    MOV  CX ,0
 	                    MOV  DX ,146
-	                    MOV  AL,05h
+	                    MOV  AL,06h
 	                    MOV  AH,0Ch
 	FILL2:              INT  10h
 	                    INC  CX
@@ -296,11 +299,11 @@ DrawBackGround proc
 	                    JNZ  FILL2
 	                    ret
 	CHANGECOLOR:        
-	                    CMP  AL,05
+	                    CMP  AL,06h
 	                    JZ   COLORBROWN
 	                    JMP  COLORBLACK
 	COLORBROWN:         
-	                    MOV  AL,07H
+	                    MOV  AL,06h
 	                    JMP  CONTINUE
 	COLORBLACK:         
 	                    MOV  AL,05
@@ -311,7 +314,7 @@ DrawBackGround Endp
 
 UpdatedBackground proc
 						MOV  CX,0
-	                    MOV  DX ,21
+	                    MOV  DX ,20
 	                    MOV  AL,0Bh
 	                    MOV  AH,0Ch
 	FILLUpdatedBG:      INT  10h
@@ -396,16 +399,17 @@ CharacterGravity proc
 	                    MOV  AX , GravityAccleration
 	                    ADD  yCoord , AX                  	;;Add the garvity value yCoordinate of the character
 	                    MOV  AX , yCoord
-	                    ADD  AX , cat_H                   	;;add the ycoord and the height of character to AX to check
+	                    add  AX , cat_H                   	;;add the ycoord and the height of character to AX to check
 	                    CMP  AX , firststepline
 	                    jge  CHECKBEFOREEND
 	                    CMP  AX , secondstepline
-	                    JGE  CHECKBEFOREENDSTEP2
+	                    JgE  CHECKBEFOREENDSTEP2
 	CONTMOVING:         CMP  AX,LandLine                  	;;if they are greater or equal to the landline (ground)
 	                    Jge  ENDMOVING
 	                    call waitForNewVR
 	                    call UpdatedBackground               	;;Remove the old position
 	                    call DrawCat                      	;;Draw with new onw
+						call DrawDog
 	                    call delay2                       	;;Draw with new onw
 	                    jmp  MOVINGPLAYERDOWN
 					 
@@ -413,13 +417,14 @@ CharacterGravity proc
 
 ENDMOVING:
 	                    MOV  AX , GravityAccleration
-	                    SUB  yCoord , AX
+	                    sub  yCoord , AX
 	                    ret
 	CHECKBEFOREEND:     
 	                    MOV  BX , xCoord
 	                    CMP  BX ,35
 	                    JGE  SECONDCHECK
 	                    JMP  CONTMOVING
+						ret
 	SECONDCHECK:        CMP  BX,125
 	                    JLE  ENDMOVING
 	                    JMP  CHECKBEFOREEND2
@@ -435,7 +440,7 @@ ENDMOVING:
 	                    CMP  BX ,100
 	                    JGE  SECONDCHECKSTEP2
 	                    JMP  CONTMOVING
-	SECONDCHECKSTEP2:   CMP  BX,210
+	SECONDCHECKSTEP2:   CMP  BX,200
 	                    JLE  ENDMOVING
 	                    JMP  CONTMOVING
 
@@ -717,8 +722,10 @@ CatHitDog proc
 					push dx  ;  save point of colliosion on stack
 					push bx ; save fi sh position x
 					; re draw all screen componenets including the fish
+					call waitForNewVR
+					;call delay2
 					call UpdatedBackground
-					
+					  
 					call DrawDog
 					call DrawCat
 					call DrawFish 
