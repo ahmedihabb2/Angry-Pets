@@ -156,11 +156,11 @@ MAIN PROC FAR
 	                    mov  ah,0
 	                    int  16h
 	                    call waitForNewVR
-	                    call DrawBackGround
-	                    mov  HealthBarPos, 'F'            	; stands for first player's health bar
-	                    call Draw_Health_Bar
-	                    mov  HealthBarPos, 'S'            	; stands for second player's health bar
-	                    call Draw_Health_Bar
+	                    call UpdatedBackground
+	                    ; mov  HealthBarPos, 'F'            	; stands for first player's health bar
+	                    ; call Draw_Health_Bar
+	                    ; mov  HealthBarPos, 'S'            	; stands for second player's health bar
+	                    ; call Draw_Health_Bar
 	                    call DrawCat
 	                    call DrawDog
 	                    call CharacterGravity
@@ -294,6 +294,36 @@ DrawBackGround proc
 	                    JMP  FILL2
 DrawBackGround Endp
 
+
+UpdatedBackground proc
+						MOV  CX,0
+	                    MOV  DX ,21
+	                    MOV  AL,0Bh
+	                    MOV  AH,0Ch
+	FILLUpdatedBG:      INT  10h
+	                    INC  CX
+	                    CMP  CX,320
+	                    JNZ  FILLUpdatedBG
+	                    INC  DX
+	                    MOV  CX,0
+	                    CMP  DX,140
+	                    JNZ  FILLUpdatedBG
+
+						MOV  CX,72
+	                    MOV  DX ,0
+	                    MOV  AL,0Bh
+	                    MOV  AH,0Ch
+	FILLUpdatedBG2:      INT  10h
+	                    INC  CX
+	                    CMP  CX,250
+	                    JNZ  FILLUpdatedBG2
+	                    INC  DX
+	                    MOV  CX,72
+	                    CMP  DX,140
+	                    JNZ  FILLUpdatedBG2
+
+		                jmp LINEDRAWING
+UpdatedBackground endp
 DrawCat proc
 	                    push ax
 	                    MOV  AH,0Bh
@@ -360,11 +390,7 @@ CharacterGravity proc
 	CONTMOVING:         CMP  AX,LandLine                  	;;if they are greater or equal to the landline (ground)
 	                    Jge  ENDMOVING
 	                    call waitForNewVR
-	                    call DrawBackGround               	;;Remove the old position
-	                    mov  HealthBarPos, 'F'            	; stands for first player's health bar
-	                    call Draw_Health_Bar
-	                    mov  HealthBarPos, 'S'            	; stands for second player's health bar
-	                    call Draw_Health_Bar
+	                    call UpdatedBackground               	;;Remove the old position
 	                    call DrawCat                      	;;Draw with new onw
 	                    call delay2                       	;;Draw with new onw
 	                    jmp  MOVINGPLAYERDOWN
