@@ -81,15 +81,29 @@ fish_W equ 20  ; fish width
 	firststepline             dw  105d
 	secondstepline            dw  69d
 	GravityAccleration        dw  2d
-	isFalling                 dw  0                                                                                                                                                                             	;detect if the player is falling or not
-	;----- HealthBar variables
-	HealthBarPos              db  '$'
-	temp_cx_HealthBar         dw  '$'
-	temp2_cx_HealthBar        dw  '$'
-	temp_dx_HealthBar         dw  '$'
-	temp_cx_HealthFillingBar  dw  '$'
-	temp2_cx_HealthFillingBar dw  '$'                                                                                                                                                                           	;detect if the player is falling or not
+	isFalling                 dw  0      
+	                                                                                                                                                                       	;detect if the player is falling or not
+	; health bar drawing
+	HealthBarPos                       db          '$'
+	temp_cx_HealthBar                  dw          '$'
+	temp2_cx_HealthBar                 dw          '$'
+	temp_dx_HealthBar                  dw          '$'
+	temp_cx_HealthFillingBar           dw          '$'
+	temp2_cx_HealthFillingBar          dw          '$'
+	HealthBarDrawn                     dw           0    ;to make sure that its drawn only once            
 
+	; save the location of the health of 1st player
+	Player1_Health_cx                  dw          '$'     
+	Player1_Health_dx                  dw          '$'
+	; save the location of the health of 2nd player
+	Player2_Health_cx                  dw          '$'     
+	Player2_Health_dx                  dw          '$'
+
+	Player1_DecHealth                  dw           0     ; If 1st player got hit   
+	Player2_DecHealth                  dw           0     ; If 2nd player got hit 
+
+	Player2_IncHealth                  dw           0     ; If 1st player got powerup   
+	Player1_IncHealth                  dw           0     ; If 2nd player got powerup 
 .CODE
 MAIN PROC FAR
 	                    MOV  AX,@data
@@ -120,7 +134,7 @@ MAIN PROC FAR
 	                    call DrawHeart
 
 	DogDrawing:	
-						mov BX , 500
+						mov BX , 200
 						mov DX  ,115
 						mov  xd, BX
 						mov  yd , DX
@@ -481,71 +495,144 @@ DrawHeart proc
 	                    ret
 DrawHeart Endp
 
-Draw_Health_Bar PROC
-	; ---------------------------------- Backcolor of health bar------------------------------
+Draw_Health_Bar PROC 
 
-	                    mov  al,0h                        	; backcolor of the bar
-	                    mov  ah,0ch
+;------------------- check whether the player has been hit?
 
-	; position of 1st player's health bar
-	                    mov  cx,20
-	                    mov  dx,9
+                cmp HealthBarPos, 83   
+                je SecondPlayerTest 
+                
+                cmp Player1_DecHealth,0 ; no hits
+                je draw_HB   ; draw the healthbar 
+                jnz decHealth1 
+
+
+;-------------------------------- Decrease the health ------------------------------
+decHealth1:
+               sub Player1_Health_cx,1
+                mov cx, Player1_Health_cx
+                mov dx,10
+                mov al,04 ;Pixel color
+                mov ah,0ch ;Draw Pixel Command
+                decP1: int 10h
+                inc dx
+                cmp dx,19
+                jnz decP1
+                jmp FinishHealthBar
+
+SecondPlayerTest:
+                cmp Player2_DecHealth,0 ; no hits
+                je draw_HB   ; draw the healthbar 
+               ; jnz decHealth2 
+
+ decHealth2:
+                sub Player2_Health_cx,1
+                mov cx, Player2_Health_cx
+                mov dx,10
+                mov al,04 ;Pixel color
+                mov ah,0ch ;Draw Pixel Command
+                decP2: int 10h
+                inc dx
+                cmp dx,19
+                jnz decP2
+                jmp FinishHealthBar
+
+;check whether the player pick a powerup or not
+;cmp Player1_IncHealth,1
+;je IncHealth1 
+;cmp Player2_IncHealth,1
+;je IncHealth1 
+
+draw_HB:   ; to make sure that it is drawn once
+                mov ax, HealthBarDrawn
+                cmp ax,0
+                je DrawFirst 
+                RET
+                
+; ---------------------------------- Backcolor of health bar------------------------------
+DrawFirst:
+                mov al,0h ; backcolor of the bar 
+                mov ah,0ch   
+
+                ; position of 1st player's health bar 
+                mov cx,20 
+                mov dx,9
             
-	                    cmp  HealthBarPos, 70             	; if it is for the first player then jump to temp
-	                    Je   temp
+                cmp HealthBarPos, 70  ; if it is for the first player then jump to temp
+                Je temp 
 
-	; else update x position for the 2nd player's health bar
-	                    mov  cx, 250
+                ; else update x position for the 2nd player's health bar                          
+                mov cx, 250
     
-	; store values of cx, dx to loop on them according to which player's health bar is being drawn
-	temp:               
-	                    mov  temp_cx_HealthBar, cx
-	                    mov  temp2_cx_HealthBar, cx       	; stores the original value of cx, before updating it
-	                    add  temp_cx_HealthBar, 50
-	                    mov  temp_dx_HealthBar, dx
-	                    add  temp_dx_HealthBar, dx
-	                    add  temp_dx_HealthBar, 2
+                ; store values of cx, dx to loop on them according to which player's health bar is being drawn
+    temp:
+                mov temp_cx_HealthBar, cx
+                mov temp2_cx_HealthBar, cx ; stores the original value of cx, before updating it
+                add temp_cx_HealthBar, 50
+                mov temp_dx_HealthBar, dx
+                add temp_dx_HealthBar, dx
+                add temp_dx_HealthBar, 2
 
-	BarBackDrawing:     
-	                    inc  cx
-	                    int  10h
-	                    cmp  cx, temp_cx_HealthBar
-	                    JNE  BarBackDrawing
-	                    mov  cx, temp2_cx_HealthBar
-	                    inc  dx
-	                    cmp  dx, temp_dx_HealthBar
-	                    JNE  BarBackDrawing
+    BarBackDrawing:
+                inc cx
+                int 10h
+                cmp cx, temp_cx_HealthBar
+                JNE BarBackDrawing
+                mov cx, temp2_cx_HealthBar  
+                inc dx      
+                cmp dx, temp_dx_HealthBar
+                JNE BarBackDrawing
 
-	;-------------------------------- Filling the bar with greencolor ------------------------------
-	                    mov  al,02h                       	; defult green color for the filling of the bar
-	                    mov  ah,0ch
+;-------------------------------- Filling the bar with greencolor ------------------------------
+                mov al,02h  ; defult green color for the filling of the bar
+                mov ah,0ch   
 
-	; position of 1st player's health bar
-	                    mov  cx, 21
-	                    mov  dx,10
-	                    cmp  HealthBarPos, 70             	; if it is for the first player then jump to temp
-	                    Je   tempFilling
+                ; position of 1st player's health bar 
+                mov cx, 21
+                mov dx,10
+                cmp HealthBarPos, 70  ; if it is for the first player then jump to temp
+                Je tempFilling
 
-	; else update x position for the 2nd player's health bar
-	                    mov  cx, 251
+                ; else update x position for the 2nd player's health bar                          
+                mov cx, 251
     
-	; store values of cx, dx to loop on them according to which player's health bar is being drawn
-	tempFilling:        
-	                    mov  temp_cx_HealthFillingBar, cx
-	                    mov  temp2_cx_HealthFillingBar, cx	; stores the original value of cx, before updating it
-	                    add  temp_cx_HealthFillingBar, 48
+                ; store values of cx, dx to loop on them according to which player's health bar is being drawn
+    tempFilling:
+                mov temp_cx_HealthFillingBar, cx
+                mov temp2_cx_HealthFillingBar, cx ; stores the original value of cx, before updating it
+                add temp_cx_HealthFillingBar, 48
 
-	BarFilling:         
-	                    inc  cx
-	                    int  10h
-	                    cmp  cx, temp_cx_HealthFillingBar 	;69
-	                    JNE  BarFilling
-	                    mov  cx,temp2_cx_HealthFillingBar 	; 21
-	                    inc  dx
-	                    cmp  dx, 19
-	                    JNE  BarFilling
-	                    RET
+    BarFilling:
+                inc cx
+                int 10h
+                cmp cx, temp_cx_HealthFillingBar 
+                JNE BarFilling
+                mov cx,temp2_cx_HealthFillingBar 
+                inc dx      
+                cmp dx, 19
+                JNE BarFilling
+
+                ; save locations
+                cmp HealthBarPos, 70  ;first player
+                je save1
+                mov cx, temp_cx_HealthFillingBar
+                inc cx
+                mov Player2_Health_cx, cx
+                mov Player2_Health_dx, dx
+                jmp FinishHealthBar 
+                save1:
+                mov cx, temp_cx_HealthFillingBar
+                inc cx
+                mov Player1_Health_cx,cx
+                mov Player1_Health_dx, dx
+                jmp FinishHealthBar
+
+
+
+FinishHealthBar:
+RET
 Draw_Health_Bar ENDP
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  Draw Fish ;;;;;;;;;;;;;;;;;;;;;;;;;;
 DrawFish proc
                    push ax
@@ -613,33 +700,47 @@ DrawDog	   proc
 DrawDog	  endp  
 ;;;;;;;;;;;;;;;;;;;; Cat Hits The Dog  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 CatHitDog proc
- mov BX , xCoord
+                   mov BX , xCoord
 	               add BX, cat_W  ; start position x for the fish
 	               mov DX, yCoord ; start position y for the fish
 	               mov  xf , BX
 	               mov  yf , DX
-				   ; push bx
 	               call DrawFish 
-				   ; pop bx ; contain initial position of fish 	    
+				   mov cx, yd ; y above coordiante of the dog
+				   sub cx, dog_W ; y below coordiante of the dog (Y above - dog width)
+				   ; push cx   
 			repeat:
-	               mov cx,10d
-				   add xf ,cx
-				    mov bx, xf ; fish position x
-					mov dx, xd
+				    inc xf   ;fish position x
+				    mov bx, xf ; store fish position x in bx 
+					mov dx, xd ; postion of colliosion (X Dog-10)
 					sub dx,10 ; stop point
-					push dx  ; save stop point
+					push dx  ;  save point of colliosion on stack
 					push bx ; save fi sh position x
-					call DrawBackGround
+					; re draw all screen componenets including the fish
+					call UpdatedBackground
+					
 					call DrawDog
 					call DrawCat
 					call DrawFish 
 					pop bx
 					pop dx
+					;pop cx
 					cmp dx,bx ; reaches dog position?
-					; deacrease health bar of the dog
-					ret
-			     	loop repeat  
+					;je check_Yabove
+                   ; continuee:		; if not 	
+				   jz finish	
+					mov ax, 305 ; end of the screen
+					cmp bx, ax  ; the fish reaches end of the screen?
+					jz finish ; end of the loop
+			     	loop repeat 
+            finish: ret  
 
+			;check_Yabove: cmp bx, cx ; check Yfish >= y above ?
+			;	          jbe check_Ybelow ; if yes: check Yfish <= y below ?
+			;			  jmp continuee  ; if no
+			;check_Ybelow: cmp bx, yd ; check y below
+             ;             jae finish ; if yes (cat hits the dog )
+			;			  jmp continuee  ; if no
 CatHitDog endp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  
