@@ -7,14 +7,26 @@
 	heart_W                   equ 15
 	heart_H                   equ 15
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PowerUps;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    PowerUpsYpos              DW 100, 64   ;100 for step 1, 2 ; 64 for step 3
-    steps_to_draw_powerUps    DW 0, 1, 2, 3 ;if 0 then nothing will be drawn
-    RandomXpos_Step1          DW 60, 80, 110, 70
-    RandomXpos_Step2          DW 200, 220, 250, 260
-    RandomXpos_Step3          DW 120, 150, 190, 170
+	PowerUpsYpos              DW 100, 64   ;100 for step 1, 2 ; 64 for step 3
+    steps_to_draw_powerUps    DW 3, 1, 2, 3 ;if 0 then nothing will be drawn
+	steps_to_draw_powerUps2   DW 2, 2, 3, 1 ;if 0 then nothing will be drawn
+    RandomXpos_Step1          DW 50, 90, 50, 90
+	RandomXpos2_Step1         DW 120, 70, 120, 70
+    RandomXpos_Step2          DW 200, 240, 240, 200
+	RandomXpos2_Step2         DW 260, 260, 220, 220
+    RandomXpos_Step3          DW 120, 160, 160, 120
+	RandomXpos2_Step3         DW 190, 190, 140, 140
     heart_powerupX            DW ?
     heart_powerupY            DW ?
+	heart_powerupX2           DW ?
+    heart_powerupY2           DW ?
     draw_PowerUp              DB 1
+	draw_PowerUp2              DB 1
+	RandomNums 				  DW 0, 0
+    ;############################################ADDDDEEEDDDD##########################################;
+    ChesonPowerUp             DW ?
+	ChesonPowerUp2             DW ?
+	CurrentPowerUp			  DW ?
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;End Power Ups;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	xCoord dw ? ;  cat x coordinate
 	yCoord dw  ? ;  cat y coordinate
@@ -34,13 +46,44 @@
 	                          DB  28, 28, 27, 21, 16, 16, 16, 16, 16, 16, 22, 26, 26, 26, 28, 29, 29, 29, 29, 29, 29, 29, 29, 28, 27, 26, 26, 26, 21, 16, 16, 16, 16, 16, 16, 17, 18, 18, 18, 23
 	                          DB  26, 28, 29, 29, 29, 29, 29, 25, 23, 18, 18, 18, 18, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18, 22, 22, 22, 22, 22, 22, 18, 16, 16, 16, 16, 16, 16, 16
 	                          DB  16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16
-​
+​;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	heart_img                 DB  16, 16, 16, 16, 16, 16, 16, 152, 23, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 154, 228, 153, 26, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 153, 228, 110, 204, 153
 	                          DB  16, 16, 16, 16, 16, 16, 16, 16, 16, 153, 228, 110, 39, 109, 204, 225, 16, 16, 16, 16, 16, 16, 16, 16, 228, 110, 39, 39, 39, 109, 204, 153, 16, 16, 16, 16, 16, 16, 201, 204
 	                          DB  109, 39, 39, 39, 39, 110, 204, 24, 16, 16, 16, 16, 152, 204, 109, 39, 39, 12, 12, 39, 39, 110, 129, 16, 16, 16, 152, 204, 109, 39, 39, 12, 12, 12, 12, 39, 39, 109, 226, 16
 	                          DB  16, 129, 180, 39, 39, 12, 12, 12, 12, 12, 12, 39, 109, 200, 16, 23, 204, 109, 39, 12, 12, 12, 12, 12, 12, 12, 38, 109, 109, 128, 23, 202, 39, 12, 12, 12, 12, 12, 12, 12
 	                          DB  12, 87, 12, 110, 225, 24, 129, 110, 12, 12, 12, 12, 109, 12, 12, 12, 87, 12, 202, 129, 16, 128, 204, 12, 12, 12, 134, 129, 204, 12, 63, 12, 134, 201, 16, 16, 16, 129, 134, 12
 	                          DB  134, 227, 23, 152, 204, 133, 133, 227, 24, 16, 16, 16, 23, 228, 201, 226, 23, 16, 24, 152, 201, 202, 24, 16, 16
+ 
+   
+    Black_heart_img         DB 16, 16, 16, 16, 16, 16, 17, 17, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 18, 18, 18, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 18, 224, 224, 18 
+                            DB 17, 16, 16, 16, 16, 16, 16, 16, 17, 17, 18, 224, 224, 224, 224, 17, 17, 16, 16, 16, 16, 16, 17, 17, 18, 224, 224, 224, 224, 224, 224, 17, 16, 16, 16, 16, 17, 17, 18, 224 
+                            DB 224, 224, 224, 224, 224, 224, 224, 17, 17, 16, 16, 17, 18, 224, 224, 224, 224, 224, 224, 224, 224, 224, 224, 17, 16, 16, 17, 18, 224, 224, 224, 224, 224, 224, 224, 224, 224, 224, 17, 17 
+                            DB 17, 18, 224, 224, 224, 224, 224, 224, 224, 224, 224, 224, 224, 224, 17, 17, 18, 224, 224, 224, 224, 224, 224, 224, 224, 224, 224, 19, 224, 17, 17, 18, 224, 224, 224, 224, 224, 224, 224, 224 
+                            DB 224, 19, 28, 227, 17, 17, 18, 224, 224, 224, 224, 224, 224, 224, 224, 19, 27, 20, 224, 17, 16, 17, 224, 224, 224, 224, 18, 17, 18, 224, 27, 21, 224, 17, 16, 16, 17, 17, 18, 224 
+                            DB 18, 17, 16, 17, 18, 18, 224, 17, 16, 16, 16, 16, 17, 17, 17, 17, 16, 16, 16, 17, 17, 17, 16, 16, 16
+
+    DubPower                DB 16, 16, 16, 16, 16, 16, 16, 16, 28, 224, 0, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 201, 136, 42, 200, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 200, 138, 42, 43 
+                            DB 177, 16, 16, 16, 16, 16, 16, 16, 16, 201, 230, 140, 43, 43, 234, 128, 16, 16, 16, 16, 16, 16, 16, 223, 234, 140, 43, 43, 43, 201, 16, 16, 16, 16, 16, 16, 20, 227, 137, 42 
+                            DB 43, 43, 43, 235, 226, 16, 16, 16, 16, 16, 16, 200, 138, 43, 43, 43, 43, 43, 206, 227, 16, 16, 16, 16, 16, 200, 140, 43, 43, 43, 43, 43, 43, 206, 177, 177, 177, 177, 225, 16 
+                            DB 200, 140, 140, 140, 140, 140, 43, 43, 43, 43, 43, 43, 43, 138, 201, 16, 200, 200, 200, 200, 200, 137, 42, 43, 43, 43, 43, 43, 138, 201, 16, 16, 16, 16, 16, 177, 139, 43, 43, 43 
+                            DB 43, 43, 140, 226, 23, 16, 16, 16, 16, 200, 137, 42, 43, 43, 43, 43, 43, 139, 201, 16, 16, 16, 16, 20, 229, 140, 43, 43, 43, 43, 43, 43, 227, 22, 16, 16, 16, 16, 200, 138 
+                            DB 43, 43, 43, 43, 43, 43, 43, 200, 16, 16, 16, 16, 16, 200, 234, 235, 235, 235, 235, 235, 235, 236, 200, 16, 16
+    
+    Shield                  DB 16, 16, 16, 16, 16, 22, 19, 17, 18, 23, 16, 16, 16, 16, 16, 16, 16, 16, 16, 19, 20, 23, 25, 24, 224, 18, 16, 16, 16, 16, 16, 16, 16, 19, 21, 25, 24, 22, 22, 24 
+                            DB 22, 224, 16, 16, 16, 16, 16, 19, 20, 25, 24, 20, 20, 20, 22, 29, 22, 18, 16, 16, 16, 19, 19, 23, 24, 21, 24, 24, 28, 22, 24, 28, 22, 18, 16, 25, 18, 23, 23, 20 
+                            DB 24, 25, 24, 30, 28, 22, 24, 29, 21, 19, 18, 23, 23, 21, 27, 25, 25, 24, 30, 0, 28, 21, 25, 29, 20, 17, 24, 23, 21, 28, 25, 25, 24, 30, 0, 29, 21, 24, 0, 20 
+                            DB 17, 24, 23, 21, 28, 25, 25, 24, 30, 0, 29, 21, 24, 0, 20, 17, 24, 23, 21, 28, 25, 25, 24, 30, 0, 29, 21, 24, 0, 20, 17, 24, 23, 21, 28, 25, 25, 24, 30, 0 
+                            DB 29, 21, 24, 0, 20, 17, 24, 23, 21, 28, 25, 25, 24, 27, 28, 27, 21, 24, 0, 20, 17, 24, 23, 18, 20, 19, 19, 19, 19, 19, 19, 18, 24, 0, 20, 224, 19, 24, 23, 23 
+                            DB 23, 23, 23, 27, 27, 27, 27, 29, 24, 20, 26, 20, 17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 19, 23
+
+
+    SpeedUp                 DB 16, 0, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 0, 16, 16, 0, 28, 18, 233, 233, 233, 233, 233, 233, 233, 18, 28, 0, 16, 16, 0, 28, 236, 43, 43, 43, 43, 43, 43 
+							DB 43, 236, 28, 0, 16, 16, 0, 28, 236, 43, 43, 43, 43, 43, 43, 43, 236, 28, 0, 16, 16, 0, 28, 236, 43, 43, 43, 43, 43, 43, 43, 236, 28, 0, 16, 0, 0, 28, 236, 43 
+							DB 43, 43, 43, 43, 43, 43, 236, 28, 0, 0, 30, 25, 24, 235, 43, 43, 43, 43, 43, 43, 43, 235, 24, 25, 30, 30, 19, 164, 140, 43, 43, 43, 43, 43, 43, 43, 140, 164, 19, 30 
+							DB 30, 25, 24, 14, 43, 43, 43, 43, 43, 43, 43, 14, 24, 25, 30, 0, 29, 25, 24, 14, 43, 43, 43, 43, 43, 14, 24, 25, 29, 0, 16, 0, 29, 25, 164, 67, 43, 43, 43, 67 
+							DB 164, 25, 29, 0, 16, 16, 16, 0, 29, 25, 24, 14, 43, 14, 24, 25, 29, 0, 16, 16, 16, 16, 16, 0, 29, 25, 24, 67, 24, 25, 29, 0, 16, 16, 16, 16, 16, 16, 16, 0 
+							DB 29, 25, 19, 25, 29, 0, 16, 16, 16, 16, 16, 16, 16, 16, 16, 0, 30, 30, 30, 0, 16, 16, 16, 16, 16
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;; fish variables ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 fish_W equ 20  ; fish width
     fish_H equ 20 ; fish height
@@ -139,8 +182,15 @@ MAIN PROC FAR
 	                    mov  HealthBarPos, 'S'            	; stands for second player's health bar
 	                    call Draw_Health_Bar
 						inc HealthBarDrawn                   ; to indicate that it has been drawn once
+						
+                        mov CurrentPowerUp, 0                  
 						call GenerateRandomNumber
+                        call GenerateRandomPowerUp
                         call DrawHeart
+						mov CurrentPowerUp, 1 
+						call GenerateRandomNumber
+                        call GenerateRandomPowerUp2
+                        call DrawHeart2
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	CatDrawing:         
 	                    mov  BX , 0
@@ -188,6 +238,7 @@ MAIN PROC FAR
 	                    call waitForNewVR
 	                    call UpdatedBackground
 						call DrawHeart
+						call DrawHeart2
 	                    ; mov  HealthBarPos, 'F'            	; stands for first player's health bar
 	                    ; call Draw_Health_Bar
 	                    ; mov  HealthBarPos, 'S'            	; stands for second player's health bar
@@ -426,7 +477,8 @@ CharacterGravity proc
 	                    Jge  ENDMOVING
 	                    call waitForNewVR
 	                    call UpdatedBackground    
-						call DrawHeart        	
+						call DrawHeart
+						call DrawHeart2     	
 	                    call DrawCat                      	
 	                    call DrawDog
 	                    ;call delay2                       	
@@ -463,6 +515,7 @@ ENDMOVING:
 	LANDONSTEP:         call waitForNewVR
 	                    call UpdatedBackground            	;;Remove the old position
 						call DrawHeart
+						call DrawHeart2
 	                    call DrawCat                      	;;Draw with new onw
 	                    call DrawDog
 	                    ;call delay2                       	;;Draw with new onw
@@ -477,6 +530,7 @@ ENDMOVING:
 	LANDONSTEP2:        call waitForNewVR
 	                    call UpdatedBackground            	;;Remove the old position
 						call DrawHeart
+						call DrawHeart2
 	                    call DrawCat                      	;;Draw with new onw
 	                    call DrawDog
 	                    ;call delay2                       	;;Draw with new onw
@@ -511,63 +565,7 @@ waitForNewVR PROC
 	                    RET
 waitForNewVR ENDP
 
-DrawHeart proc
 
-
-	                    push ax
-        CheckYpos1:     mov ax,yCoord
-                        cmp heart_powerupY, ax
-                        jl  DidnotTake
-        CheckYpos2:     add ax,cat_H
-                        cmp heart_powerupY, ax
-                        jg  DidnotTake
-        CheckXpos1:     mov ax,xCoord
-                        cmp heart_powerupX, ax
-                        jl  DidnotTake
-        CheckXpos2:     add ax,cat_W
-                        cmp heart_powerupX, ax
-                        jg  DidnotTake
-        took:
-                        call GenerateRandomNumber
-        DidnotTake:
-                        cmp draw_PowerUp, 0
-                        jz ENDINGHeart
-        
-	                    MOV  AH,0Bh
-	                    MOV  CX, heart_W
-	                    MOV  DX, heart_H
-	                    mov  DI, offset heart_img
-                        
-	                    jmp  StartHeart
-                        
-	Drawalb:            
-	                    MOV  AH,0Ch
-	                    mov  al, [DI]
-	                    CMP  al,16
-	                    JZ   StartHeart
-	                    MOV  BH,00h
-	                    add  cx,heart_powerupX
-                        sub dx, heart_W
-	                    add  dx,heart_powerupY
-                       
-	                    INT  10h
-	                    sub  cx , heart_powerupX
-                        add dx, heart_W
-	                    sub  dx , heart_powerupY
-                        
-	StartHeart:         
-	                    inc  DI
-	                    DEC  Cx
-	                    JNZ  Drawalb
-	                    mov  Cx, heart_W
-	                    DEC  DX
-	                    JZ   ENDINGHeart
-	                    Jmp  Drawalb
-
-	ENDINGHeart:        mov draw_PowerUp , 1
-	                    pop  ax
-	                    ret
-DrawHeart Endp
 
 
 
@@ -820,6 +818,7 @@ CatHitDog proc
 					;call delay2
 					call UpdatedBackground  
 					call DrawHeart
+					call DrawHeart2
 					call DrawDog
 					call DrawCat
 					call DrawFish 
@@ -856,7 +855,316 @@ CatHitDog endp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PowerUps;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-GenerateRandomNumber proc 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+DrawHeart proc
+
+
+	                    push ax
+						
+        CheckYpos1:     mov ax,yCoord
+                        cmp heart_powerupY, ax
+                        jl  DidnotTake
+        CheckYpos2:     add ax,cat_H
+                        cmp heart_powerupY, ax
+                        jg  DidnotTake
+        CheckXpos1:     mov ax,xCoord
+                        cmp heart_powerupX, ax
+                        jl  DidnotTake
+        CheckXpos2:     add ax,cat_W
+                        cmp heart_powerupX, ax
+                        jg  DidnotTake
+        took:
+						mov CurrentPowerUp, 0
+                        call GenerateRandomNumber
+                        call GenerateRandomPowerUp
+        DidnotTake:
+                        cmp draw_PowerUp, 0
+                        jz ENDINGHeart
+                        
+	                    MOV  AH,0Bh
+	                    MOV  CX, heart_W
+	                    MOV  DX, heart_H
+                        CMP ChesonPowerUp, 0
+                        jz Blackheart
+                        CMP ChesonPowerUp, 1
+                        jz RedHeart
+                        CMP ChesonPowerUp, 2
+                        jz Power
+                        CMP ChesonPowerUp, 3
+                        jz shieldDraw
+                        CMP ChesonPowerUp, 4
+                        jz SpeedUpDraw
+	    RedHeart:       mov  DI, offset heart_img
+                        jmp STARTDRAWING
+
+        Blackheart:     mov  DI, offset Black_heart_img
+                        jmp  STARTDRAWING
+        Power:          mov DI, offset DubPower
+                        jmp  STARTDRAWING
+        shieldDraw:     mov DI, offset Shield
+                        jmp  STARTDRAWING
+        SpeedUpDraw:     mov DI, offset SpeedUp
+                        jmp  STARTDRAWING
+                        
+        STARTDRAWING:   jmp  StartHeart
+                     
+	Drawalb:            
+	                    MOV  AH,0Ch
+	                    mov  al, [DI]
+	                    CMP  al,16
+	                    JZ   StartHeart
+	                    MOV  BH,00h
+	                    add  cx,heart_powerupX
+                        sub dx, heart_W
+	                    add  dx,heart_powerupY
+                       
+	                    INT  10h
+	                    sub  cx , heart_powerupX
+                        add dx, heart_W
+	                    sub  dx , heart_powerupY
+                        
+	StartHeart:         
+	                    inc  DI
+	                    DEC  Cx
+	                    JNZ  Drawalb
+	                    mov  Cx, heart_W
+	                    DEC  DX
+	                    JZ   ENDINGHeart
+	                    Jmp  Drawalb
+
+	ENDINGHeart:        mov draw_PowerUp , 1
+	                    pop  ax
+	                    ret
+DrawHeart Endp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+DrawHeart2 proc
+
+
+	                    push ax
+        CheckYpos12:     mov ax,yCoord
+                        cmp heart_powerupY2, ax
+                        jl  DidnotTake2
+        CheckYpos22:     add ax,cat_H
+                        cmp heart_powerupY2, ax
+                        jg  DidnotTake2
+        CheckXpos12:     mov ax,xCoord
+                        cmp heart_powerupX2, ax
+                        jl  DidnotTake2
+        CheckXpos22:     add ax,cat_W
+                        cmp heart_powerupX2, ax
+                        jg  DidnotTake2
+        took2:
+						mov CurrentPowerUp, 1 
+                        call GenerateRandomNumber
+                        call GenerateRandomPowerUp2
+        DidnotTake2:
+                        cmp draw_PowerUp2, 0
+                        jz ENDINGHeart2
+                        
+	                    MOV  AH,0Bh
+	                    MOV  CX, heart_W
+	                    MOV  DX, heart_H
+                        CMP ChesonPowerUp2, 0
+                        jz Blackheart2
+                        CMP ChesonPowerUp2, 1
+                        jz RedHeart2
+                        CMP ChesonPowerUp2, 2
+                        jz Power2
+                        CMP ChesonPowerUp2, 3
+                        jz shieldDraw2
+                        CMP ChesonPowerUp2, 4
+                        jz SpeedUpDraw2
+	    RedHeart2:       mov  DI, offset heart_img
+                        jmp STARTDRAWING2
+
+        Blackheart2:     mov  DI, offset Black_heart_img
+                        jmp  STARTDRAWING2
+        Power2:          mov DI, offset DubPower
+                        jmp  STARTDRAWING2
+        shieldDraw2:     mov DI, offset Shield
+                        jmp  STARTDRAWING2
+        SpeedUpDraw2:     mov DI, offset SpeedUp
+                        jmp  STARTDRAWING2
+                        
+        STARTDRAWING2:   jmp  StartHeart2
+                        
+	Drawalb2:            
+	                    MOV  AH,0Ch
+	                    mov  al, [DI]
+	                    CMP  al,16
+	                    JZ   StartHeart2
+	                    MOV  BH,00h
+	                    add  cx,heart_powerupX2
+                        sub dx, heart_W
+	                    add  dx,heart_powerupY2
+                       
+	                    INT  10h
+	                    sub  cx , heart_powerupX2
+                        add dx, heart_W
+	                    sub  dx , heart_powerupY2
+                        
+	StartHeart2:         
+	                    inc  DI
+	                    DEC  Cx
+	                    JNZ  Drawalb2
+	                    mov  Cx, heart_W
+	                    DEC  DX
+	                    JZ   ENDINGHeart2
+	                    Jmp  Drawalb2
+
+	ENDINGHeart2:        mov draw_PowerUp2 , 1
+	                    pop  ax
+	                    ret
+DrawHeart2 Endp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PowerUps;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+GenerateRandomNumber proc
+
+mov DI, offset RandomNums
+	STARTGENERATING:
+		CMP CurrentPowerUp, 1
+		jnz RESUME
+		ADD DI, 2
+	RESUME:	
+		mov ah,0h ; interrupts to get system time
+
+		int 1ah ; CX:DX now hold number of clock ticks since midnight
+
+		mov ax,dx
+
+		xor dx,dx
+
+		mov cx,7
+
+		div cx ; here dx contains the remainder of the division - from 0 to 6
+		mov cx, 2
+		mov bx, dx
+		mov ax, dx
+		xor dx,dx
+		div cx
+		cmp dx, 1
+		jne evenNum
+		add bx,1
+	evenNum:
+		mov [DI], bx
+		cmp CurrentPowerUp, 1
+		jz SecondPower
+		mov bx, offset steps_to_draw_powerUps
+		add bx, [DI]
+		mov ax, [bx]
+		cmp ax, 3
+		jz DrawOnStep3
+		cmp ax, 2
+		jz DrawOnStep2
+		cmp ax, 1
+		jz DrawOnStep1
+		cmp ax, 0
+		jz DontDraw
+		
+	DrawOnStep3:
+		mov bx, offset PowerUpsYpos
+		add bx, 2
+		mov ax, [bx]
+		mov heart_powerupY, ax
+		mov bx, offset RandomXpos_Step3
+		add bx, [DI]
+		mov ax,heart_powerupX
+		CMP ax, [bx]
+		jz RESUMEMIDDLE
+		mov ax, [bx]
+		mov heart_powerupX, ax
+		jmp ENDRANDOM
+
+	DrawOnStep2:
+		mov bx, offset PowerUpsYpos
+		mov ax, [bx]
+		mov heart_powerupY, ax
+		mov bx, offset RandomXpos_Step2
+		add bx, [DI]
+		mov ax,heart_powerupX
+		CMP ax, [bx]
+		jz RESUMEMIDDLE
+		mov ax, [bx]
+		mov heart_powerupX, ax
+		jmp ENDRANDOM
+	DrawOnStep1:
+		mov bx, offset PowerUpsYpos
+		mov ax, [bx]
+		mov heart_powerupY, ax
+		mov bx, offset RandomXpos_Step1
+		add bx, [DI]
+		mov ax,heart_powerupX
+		CMP ax, [bx]
+		jz RESUMEMIDDLE
+		mov ax, [bx]
+		mov heart_powerupX, ax
+		jmp ENDRANDOM
+	DontDraw:
+		mov draw_PowerUp, 0
+		jmp ENDRANDOM
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	RESUMEMIDDLE: jmp RESUME  
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SecondPower:
+		
+		mov bx, offset steps_to_draw_powerUps2
+		add bx, [DI]
+		mov ax, [bx]
+		cmp ax, 3
+		jz DrawOnStep32
+		cmp ax, 2
+		jz DrawOnStep22
+		cmp ax, 1
+		jz DrawOnStep12
+		cmp ax, 0
+		jz DontDraw2 
+	DrawOnStep32:
+		mov bx, offset PowerUpsYpos
+		add bx, 2
+		mov ax, [bx]
+		mov heart_powerupY2, ax
+		mov bx, offset RandomXpos2_Step3
+		add bx, [DI]
+		mov ax,heart_powerupX2
+		CMP ax, [bx]
+		jz RESUMEMIDDLE
+		mov ax, [bx]
+		mov heart_powerupX2, ax
+		jmp ENDRANDOM
+
+	DrawOnStep22:
+		mov bx, offset PowerUpsYpos
+		mov ax, [bx]
+		mov heart_powerupY2, ax
+		mov bx, offset RandomXpos2_Step2
+		add bx, [DI]
+		mov ax,heart_powerupX2
+		CMP ax, [bx]
+		jz RESUMEMIDDLE
+		mov ax, [bx]
+		mov heart_powerupX2, ax
+		jmp ENDRANDOM
+	DrawOnStep12:
+		mov bx, offset PowerUpsYpos
+		mov ax, [bx]
+		mov heart_powerupY2, ax
+		mov bx, offset RandomXpos2_Step1
+		add bx, [DI]
+		mov ax,heart_powerupX2
+		CMP ax, [bx]
+		jz RESUMEMIDDLE
+		mov ax, [bx]
+		mov heart_powerupX2, ax
+		jmp ENDRANDOM
+	DontDraw2:
+		mov draw_PowerUp2, 0
+	ENDRANDOM:
+	ret
+GenerateRandomNumber Endp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+GenerateRandomPowerUp proc 
 mov ah,0h ; interrupts to get system time
 
 int 1ah ; CX:DX now hold number of clock ticks since midnight
@@ -865,67 +1173,32 @@ mov ax,dx
 
 xor dx,dx
 
-mov cx,7
+mov cx,5
 
-div cx ; here dx contains the remainder of the division - from 0 to 6
-mov cx, 2
-mov bx, dx
-mov ax, dx
-xor dx,dx
-div cx
-cmp dx, 1
-jne evenNum
-add bx,1
-evenNum:
-
-mov dx,bx
-
-mov bx, offset steps_to_draw_powerUps
-add bx, dx
-mov ax, [bx]
-cmp ax, 3
-jz DrawOnStep3
-cmp ax, 2
-jz DrawOnStep2
-cmp ax, 1
-jz DrawOnStep1
-cmp ax, 0
-jz DontDraw  
-DrawOnStep3:
-    mov bx, offset PowerUpsYpos
-    add bx, 2
-    mov ax, [bx]
-    mov heart_powerupY, ax
-    mov bx, offset RandomXpos_Step3
-    add bx, dx
-    mov ax, [bx]
-    mov heart_powerupX, ax
-    jmp ENDRANDOM
-
-DrawOnStep2:
-    mov bx, offset PowerUpsYpos
-    mov ax, [bx]
-    mov heart_powerupY, ax
-    mov bx, offset RandomXpos_Step2
-    add bx, dx
-    mov ax, [bx]
-    mov heart_powerupX, ax
-    jmp ENDRANDOM
-DrawOnStep1:
-    mov bx, offset PowerUpsYpos
-    mov ax, [bx]
-    mov heart_powerupY, ax
-    mov bx, offset RandomXpos_Step1
-    add bx, dx
-    mov ax, [bx]
-    mov heart_powerupX, ax
-    jmp ENDRANDOM
-DontDraw:
-    mov draw_PowerUp, 0
-ENDRANDOM:
+div cx ; here dx contains the remainder of the division - from 0 to 4
+mov ChesonPowerUp, dx
 ret
-GenerateRandomNumber Endp
+GenerateRandomPowerUp Endp
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+GenerateRandomPowerUp2 proc 
+mov ah,0h ; interrupts to get system time
+
+int 1ah ; CX:DX now hold number of clock ticks since midnight
+
+mov ax,dx
+
+xor dx,dx
+
+mov cx,5
+
+div cx ; here dx contains the remainder of the division - from 0 to 4
+mov ChesonPowerUp2, dx
+ret
+GenerateRandomPowerUp2 Endp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 END MAIN
