@@ -792,7 +792,6 @@ RET
 
 Draw_Health_Bar ENDP
 
-end main
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  Draw Fish ;;;;;;;;;;;;;;;;;;;;;;;;;;
 DrawFish proc
