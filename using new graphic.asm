@@ -138,27 +138,31 @@ fish_W equ 20  ; fish width
 	isFalling                 dw  0      
 	                                                                                                                                                                       	;detect if the player is falling or not
 	; health bar drawing
-	HealthBarPos                       db          '$'
-	temp_cx_HealthBar                  dw          '$'
-	temp2_cx_HealthBar                 dw          '$'
-	temp_dx_HealthBar                  dw          '$'
-	temp_cx_HealthFillingBar           dw          '$'
-	temp2_cx_HealthFillingBar          dw          '$'
+HealthBarPos                       db          '$'
+temp_cx_HealthBar                  dw          '$'
+temp2_cx_HealthBar                 dw          '$'
+temp_dx_HealthBar                  dw          '$'
+temp_cx_HealthFillingBar           dw          '$'
+temp2_cx_HealthFillingBar          dw          '$'
 
-	; save the location of the health of 1st player
-	Player1_Health_cx                  dw          '$'     
-	; save the location of the health of 2nd player
-	Player2_Health_cx                  dw          '$'     
+; save the location of the health of 1st player
+Player1_Health_cx                  dw          '$'     
+; save the location of the health of 2nd player
+Player2_Health_cx                  dw          '$'     
 
 
-	Player1_DecHealth                  dw           0     ; If 1st player got hit   
-	Player2_DecHealth                  dw           0     ; If 2nd player got hit 
+Player1_DecHealth                  dw           0     ; If 1st player got hit   
+Player2_DecHealth                  dw           0     ; If 2nd player got hit 
 
-	Player2_IncHealth                  dw           0     ; If 1st player got powerup   
-	Player1_IncHealth                  dw           0     ; If 2nd player got powerup 
-	HealthBarDrawn                     dw           0    ;to make sure that its drawn only once            
-	countHB1                           dw           0
-	countHB2                           dw           0
+Player2_IncHealth                  dw           0     ; If 1st player got powerup   
+Player1_IncHealth                  dw           0     ; If 2nd player got powerup 
+tempvar                            dw           0     ; temp
+HealthBarDrawn                     dw           0    ;to make sure that its drawn only once            
+countHB1                           dw           0     ;for only doubling the decreasing value of health of player 1
+countHB2                           dw           0     ;for only doubling the decreasing value of health of player 2
+countINC1                          dw           0     ;for only doubling the increasing value of health of player 1
+countINC2                          dw           0     ;for only doubling the increasing value of health of player 1
+
 
 	;-----------------------------------
 .CODE
@@ -571,6 +575,7 @@ waitForNewVR ENDP
 
  Draw_Health_Bar PROC 
 
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Decrease health
 ;------------------- check whether the 1st player has been hit?
                  cmp Player1_DecHealth,0 ; no hits
                  je SecondPlayerTest   
@@ -603,18 +608,20 @@ waitForNewVR ENDP
                
 ;------------------- check again whether the 1st player is the loser now?
                 cmp Player1_Health_cx, 21
-                jbe ReFinish  
+                ja SecondPlayerTest
+                ret  
    
 ;------------------------------- check whether the 2nd player has been hit? ----------------------
 SecondPlayerTest:
                 
                  cmp Player2_DecHealth,0 
-                 je check_draw_HB  
+                 je CheckIncHealthP1  
 
 ;------------------- check whether the 2nd player is the loser?
-                   sub Player2_Health_cx,1
-                   cmp Player2_Health_cx, 251
-                   jbe ReFinish  
+                sub Player2_Health_cx,1
+                cmp Player2_Health_cx, 251
+                ja decHealth2
+                ret  
 
  decHealth2:
                  
@@ -637,10 +644,70 @@ SecondPlayerTest:
                 mov countHB2,0
 
 ;------------------- check again whether the 2nd player is the loser?
-                  cmp Player2_Health_cx, 251
-                  jbe ReFinish 
+                cmp Player2_Health_cx, 251
+                ja CheckIncHealthP1
+ret 
 
-;----------------------------------to make sure that it is drawn once ------------------      
+
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Increase health
+;-------------------- check whether the first player caught a powerup to increase his health?------
+CheckIncHealthP1:
+                cmp Player1_IncHealth,0
+                je CheckIncHealthP2
+
+;------------- if he caught a powerup then: 
+                cmp Player1_Health_cx,69 ; if his health is full then do nothing
+                je CheckIncHealthP2 
+
+IncHealth1:
+                mov cx, Player1_Health_cx
+                mov dx,10
+                mov al,02h ;Pixel color
+                mov ah,0ch ;Draw Pixel Command
+                incP1: int 10h
+                inc dx
+                cmp dx,19
+                jnz incP1
+                Inc countINC1    ;for only doubling the value to increase 
+                cmp countINC1,2
+                jb doubleINCHB1
+                jmp countinueHBinc
+                
+                doubleINCHB1: inc Player1_Health_cx 
+                jmp IncHealth1
+                countinueHBinc:
+                mov countINC1,0
+
+;-------------------- check whether the second player caught a powerup to increase his health?------
+
+CheckIncHealthP2:
+                cmp Player2_IncHealth,0
+                je check_draw_HB
+
+;------------- if he caught a powerup then: 
+                cmp Player2_Health_cx,299 ; if his health is full then do nothing
+                je check_draw_HB
+
+IncHealth2:
+                mov cx, Player2_Health_cx
+                mov dx,10
+                mov al,02h ;Pixel color
+                mov ah,0ch ;Draw Pixel Command
+                incP2: int 10h
+                inc dx
+                cmp dx,19
+                jnz incP2
+                Inc countINC2    ;for only doubling the value to increase 
+                cmp countINC2,2
+                jb doubleINCHB2
+                jmp countinueHBinc2
+                
+                doubleINCHB2: inc Player2_Health_cx 
+                jmp IncHealth2
+                countinueHBinc2:
+                mov countINC2,0
+
+;---------------------------------- to make sure that it is drawn once ------------------      
 check_draw_HB:  
                 mov ax, HealthBarDrawn
                 cmp ax,0
@@ -648,9 +715,11 @@ check_draw_HB:
 
 
 ReFinish: jmp FinishHealthBar
+
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Draw health bar once
 ; ---------------------------------- Backcolor of health bar------------------------------
 DrawFirst:
-                mov al,0h ; backcolor of the bar 
+                mov al,0fh ; backcolor of the bar 
                 mov ah,0ch   
 
                 ; position of 1st player's health bar 
@@ -717,11 +786,13 @@ DrawFirst:
 FinishHealthBar:
              mov  Player2_DecHealth,0
              mov  Player1_DecHealth,0
-
-
+             mov  Player1_IncHealth,0
+             mov  Player2_IncHealth,0
 RET
 
 Draw_Health_Bar ENDP
+
+end main
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  Draw Fish ;;;;;;;;;;;;;;;;;;;;;;;;;;
 DrawFish proc
