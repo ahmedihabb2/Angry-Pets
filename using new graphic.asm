@@ -30,6 +30,8 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;End Power Ups;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	xCoord dw ? ;  cat x coordinate
 	yCoord dw  ? ;  cat y coordinate
+	 xleft_cat dw ?  ; cat x coordinate (left)
+	ybelow_cat dw ?  ; cat y coordinate (below)
 	cat_img                   DB  16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 22, 22, 22, 22, 20, 19, 22, 19
 	                          DB  22, 20, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18, 20, 24, 24, 24, 28, 29, 29, 29, 24, 23, 27, 21, 29, 22, 16, 16, 16, 16, 16, 16, 16, 16, 16, 19, 25, 26, 24
 	                          DB  20, 20, 28, 29, 29, 28, 24, 24, 28, 21, 29, 24, 18, 16, 16, 16, 16, 16, 16, 16, 16, 22, 28, 25, 20, 16, 17, 28, 29, 29, 27, 23, 28, 28, 21, 29, 28, 224, 16, 16
@@ -90,6 +92,9 @@ fish_W equ 20  ; fish width
 	xf dw ? ;  fish x coordinate
 	yf dw  ? ; fish y coordinate
 	fish_velocity dw 02h 
+	start_hitting dw 0 ; flag to indicate that cat hits the dog
+    direction_of_hitting dw 1 ; default right  cat =>>> dog
+
     fish_img DB 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31 
 	DB 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31 
 	DB 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 30, 31, 30, 31, 31, 31, 30, 31, 31, 31, 31, 31, 31, 31, 31 
@@ -105,27 +110,40 @@ fish_W equ 20  ; fish width
  dog_W   equ 30; dog width
 	dog_H   equ 25  ;dog height
 	xd dw ?  ; dog x coordinate
+	 xleft_dog dw ?  ; dog x coordinate (left)
     yd dw ?  ; dog y coordinate
 	ybelow_dog dw ?  ; dog y coordinate (below)
-	dog_img DB 16, 16, 16, 16, 16, 16, 183, 137, 164, 24, 24, 24, 23, 159, 136, 16, 16, 17, 135, 23, 162, 160, 183, 183, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 183, 139, 66, 66, 89 
-	DB 30, 31, 30, 30, 22, 183, 183, 209, 26, 0, 31, 24, 25, 26, 230, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 209, 65, 66, 66, 66, 66, 26, 163, 160, 22, 24, 160, 136, 65, 66 
-	DB 65, 137, 24, 25, 234, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 137, 66, 66, 66, 66, 66, 30, 29, 23, 23, 27, 24, 138, 66, 66, 24, 137, 139, 138, 17, 16, 16, 16, 16, 16 
-	DB 16, 16, 16, 183, 183, 139, 66, 66, 66, 66, 66, 30, 31, 29, 137, 24, 24, 163, 65, 66, 24, 137, 139, 136, 16, 16, 16, 16, 16, 16, 16, 209, 136, 138, 138, 162, 66, 66, 66, 66 
-	DB 66, 90, 31, 26, 138, 140, 163, 164, 66, 66, 65, 26, 163, 136, 16, 16, 16, 16, 16, 16, 209, 138, 164, 164, 137, 138, 66, 66, 66, 66, 66, 66, 89, 163, 12, 66, 65, 64, 66, 66 
-	DB 89, 28, 26, 233, 16, 16, 16, 16, 16, 16, 210, 164, 65, 164, 17, 136, 66, 66, 66, 66, 66, 64, 164, 65, 66, 66, 66, 65, 66, 66, 29, 30, 30, 23, 17, 16, 16, 16, 16, 16 
-	DB 210, 164, 66, 23, 17, 183, 24, 66, 66, 65, 163, 65, 66, 66, 66, 66, 66, 66, 66, 89, 31, 31, 31, 25, 17, 16, 16, 16, 16, 16, 183, 138, 65, 89, 138, 183, 136, 66, 66, 66 
-	DB 66, 66, 66, 66, 66, 66, 66, 66, 66, 30, 31, 31, 31, 26, 17, 16, 16, 16, 16, 16, 16, 183, 137, 163, 163, 208, 16, 137, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 66, 30 
-	DB 31, 31, 31, 29, 234, 16, 16, 183, 183, 16, 16, 16, 16, 16, 16, 16, 16, 16, 136, 24, 66, 66, 66, 66, 66, 66, 66, 66, 66, 89, 30, 31, 31, 30, 22, 183, 16, 160, 62, 183 
-	DB 16, 16, 16, 16, 16, 16, 16, 16, 16, 185, 137, 65, 66, 66, 66, 66, 66, 66, 66, 66, 89, 0, 31, 30, 29, 26, 162, 158, 63, 183, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16 
-	DB 208, 208, 163, 66, 66, 66, 66, 66, 66, 66, 89, 30, 31, 0, 28, 23, 159, 63, 156, 183, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 139, 66, 66, 66, 66, 66, 66 
-	DB 30, 31, 31, 29, 209, 207, 135, 135, 183, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 138, 66, 66, 66, 66, 90, 0, 31, 31, 28, 209, 183, 183, 17, 16, 16 
-	DB 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 139, 66, 66, 66, 91, 31, 31, 31, 31, 31, 31, 29, 160, 234, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16 
-	DB 16, 16, 16, 16, 16, 136, 66, 66, 66, 90, 90, 66, 66, 66, 89, 91, 0, 23, 136, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 210, 65, 66, 66, 66 
-	DB 66, 65, 163, 163, 65, 66, 90, 137, 183, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 209, 65, 66, 66, 66, 66, 66, 23, 137, 66, 66, 138, 208, 16, 16 
-	DB 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 163, 66, 66, 66, 66, 66, 66, 90, 91, 64, 208, 186, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16 
-	DB 16, 16, 16, 16, 16, 17, 138, 65, 139, 164, 65, 66, 66, 66, 66, 137, 208, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 209, 138, 136, 136 
-	DB 136, 137, 162, 139, 209, 137, 208, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 208, 210, 136, 137, 17, 16, 16, 17, 210, 137, 208, 16, 16, 16 
-	DB 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 183, 209, 208, 16, 16, 16, 17, 208, 17, 16, 16, 16
+	dog_img DB 16, 16, 187, 186, 186, 186, 186, 186, 16, 16, 16, 137, 137, 139, 139, 139, 138, 186, 16, 16, 16, 186, 137, 139, 139, 163, 186, 16, 16, 16, 16, 186, 212, 27, 27, 27, 27, 139, 137, 186 
+ DB 187, 114, 139, 89, 91, 90, 164, 186, 16, 16, 16, 186, 139, 90, 90, 164, 186, 16, 16, 16, 137, 138, 26, 90, 27, 139, 139, 139, 6, 6, 6, 42, 140, 24, 91, 91, 27, 138, 187, 187 
+ DB 187, 138, 27, 89, 12, 138, 186, 16, 16, 16, 211, 27, 91, 90, 65, 6, 115, 140, 42, 65, 66, 12, 65, 89, 91, 91, 24, 27, 91, 91, 91, 27, 164, 66, 42, 6, 114, 187, 16, 16 
+ DB 114, 65, 66, 65, 42, 140, 140, 42, 42, 89, 90, 65, 42, 12, 66, 24, 25, 90, 91, 91, 91, 90, 26, 24, 66, 65, 114, 187, 16, 16, 187, 140, 42, 42, 42, 42, 42, 12, 66, 90 
+ DB 66, 65, 12, 66, 90, 89, 90, 91, 91, 91, 91, 91, 90, 89, 91, 65, 114, 187, 16, 16, 187, 140, 42, 42, 42, 42, 42, 12, 90, 90, 66, 66, 89, 91, 91, 91, 91, 90, 90, 90 
+ DB 91, 91, 91, 91, 91, 89, 138, 187, 16, 16, 137, 6, 6, 42, 42, 42, 42, 12, 90, 90, 66, 90, 91, 91, 91, 91, 90, 91, 91, 91, 90, 91, 91, 91, 91, 91, 163, 187, 16, 16 
+ DB 186, 186, 114, 138, 6, 140, 42, 12, 90, 90, 66, 91, 91, 91, 90, 91, 91, 91, 90, 91, 91, 91, 91, 90, 91, 90, 139, 187, 16, 16, 16, 16, 16, 186, 186, 137, 6, 140, 65, 90 
+ DB 90, 89, 90, 90, 90, 91, 91, 91, 91, 91, 91, 91, 90, 90, 89, 65, 137, 187, 16, 16, 16, 16, 16, 16, 16, 16, 211, 114, 139, 65, 65, 65, 65, 65, 89, 91, 91, 91, 91, 91 
+ DB 91, 91, 91, 89, 65, 115, 186, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 164, 114, 12, 65, 42, 65, 66, 91, 91, 30, 30, 30, 30, 30, 91, 91, 91, 66, 6, 114, 187, 16, 16 
+ DB 16, 16, 16, 16, 16, 16, 16, 164, 211, 138, 140, 65, 90, 91, 30, 29, 29, 90, 90, 90, 29, 29, 30, 91, 90, 65, 114, 187, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 211 
+ DB 114, 65, 91, 30, 30, 30, 24, 233, 160, 136, 162, 30, 30, 30, 91, 65, 114, 187, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 212, 114, 65, 91, 91, 91, 26, 26, 24, 232, 23 
+ DB 28, 25, 90, 91, 91, 65, 114, 187, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 137, 114, 140, 89, 91, 91, 90, 65, 137, 210, 211, 12, 89, 91, 91, 90, 164, 137, 211, 16, 16 
+ DB 16, 16, 16, 16, 16, 16, 16, 16, 16, 212, 114, 42, 65, 66, 64, 140, 140, 42, 42, 42, 42, 140, 64, 66, 66, 42, 114, 187, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 212 
+ DB 114, 140, 42, 138, 235, 233, 137, 42, 42, 42, 140, 18, 160, 137, 42, 42, 114, 187, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 114, 6, 42, 42, 42, 6, 210, 6, 12, 89, 65 
+ DB 140, 187, 137, 42, 42, 42, 6, 114, 187, 16, 16, 16, 16, 16, 16, 16, 16, 24, 139, 138, 65, 66, 64, 140, 42, 42, 42, 42, 66, 65, 42, 42, 42, 42, 12, 66, 65, 138, 137, 138 
+ DB 16, 16, 16, 16, 16, 16, 16, 164, 210, 65, 90, 87, 88, 164, 137, 6, 140, 140, 140, 140, 140, 140, 115, 139, 26, 89, 90, 65, 114, 186, 16, 16, 16, 16, 16, 16, 16, 114, 138, 89 
+ DB 90, 90, 89, 138, 186, 186, 186, 186, 186, 186, 186, 211, 211, 137, 65, 90, 90, 90, 140, 187, 16, 16, 16, 16, 16, 16, 16, 187, 140, 90, 90, 66, 139, 114, 16, 16, 16, 16, 16, 16 
+ DB 16, 16, 16, 210, 115, 65, 89, 90, 12, 187, 16, 16, 16, 16, 16, 16, 16, 187, 6, 66, 164, 137, 211, 209, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 186, 138, 140, 89, 164, 187 
+ DB 16, 16, 16, 16, 16, 16, 16, 164, 114, 137, 114, 186, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 186, 186, 138, 114, 186
+;;;;;;;;;;;;;;;;;;;;;;;;;;;; ball variables ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ball_W equ 15 ; ball width
+    ball_H equ 10 ; ball  height
+	xball dw ? ;  ball x coordinate
+	yball dw  ? ; ball y coordinate
+	ball_velocity dw 02h 
+    start_balling dw 0 ; flag to indicate that dog hits the cat
+   ball_img DB 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16, 18, 198, 54, 54, 54, 54, 54, 54, 54, 198, 17, 16, 16, 17, 223, 151, 54, 54, 54, 54, 54, 54, 54 
+            DB 54, 54, 126, 198, 17, 16, 149, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 125, 16, 16, 149, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 125, 16, 16, 149, 54, 54, 54 
+            DB 54, 54, 54, 54, 54, 54, 54, 54, 125, 16, 16, 149, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 125, 16, 16, 223, 125, 54, 54, 54, 54, 54, 54, 54, 54, 54, 126, 198, 16 
+            DB 16, 17, 18, 198, 54, 54, 54, 54, 54, 54, 54, 198, 18, 17, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16                                                                                                                                                                                                      		;;Cat Moving Variables
+            ​ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ​                                                                                                                                                                                                           		;;Cat Moving Variables
 ​ 
@@ -210,80 +228,12 @@ MAIN PROC FAR
 						mov  yd , DX
 						call DrawDog	   
 					
-					 
-	;call CharacterGravity
+					 ;call CharacterGravity
 
+					    call read_the_key
 
-	CHECK:              mov  ah,1
-	                    int  16h
-	                    jz   CHECK
+	ENDING:    
 
-                        cmp  ah,44
-	                    jz   Fish_Hit
-
-	                    cmp  ah,72
-	                    jz   MoveUp
-
-	                    cmp  ah,80
-	                    jz   MoveDown
-
-	                    cmp  ah,75
-	                    jz   MoveLeft
-
-	                    cmp  ah,77
-	                    jz   MoveRight
-
-	                    cmp  al, 32
-	                    jz   JUMPUP
-
-	ReadKey:            
-	                    mov  ah,0
-	                    int  16h
-	                    call waitForNewVR
-	                    call UpdatedBackground
-						call DrawHeart
-						call DrawHeart2
-	                    ; mov  HealthBarPos, 'F'            	; stands for first player's health bar
-	                    ; call Draw_Health_Bar
-	                    ; mov  HealthBarPos, 'S'            	; stands for second player's health bar
-	                    ; call Draw_Health_Bar
-	                    call DrawCat
-						
-	                    call DrawDog
-						
-	                    call CharacterGravity
-	                    ;call delay
-	                    jmp  CHECK
-
-	MoveUp:             
-	          
-	                    sub  yCoord,6
-	                    jmp  ReadKey
-
-	MoveDown:           
-	          
-	;;add  yCoord , 4
-	                    jmp  ReadKey
-
-	MoveLeft:           
-	                    cmp  xCoord, 0
-	                    jle  ReadKey
-	          
-	                    sub  xCoord,6
-	                    jmp  ReadKey
-
-	MoveRight:          cmp  xCoord, 292
-	                    jge  ReadKey
-	                    add  xCoord , 6
-	                    jmp  ReadKey
-	JUMPUP:             
-	                    sub  yCoord , 46
-	                    jmp  ReadKey
-	Fish_Hit:                  
-	                    call CatHitDog
-						jmp  ReadKey
-
-	ENDING:             
 MAIN ENDP
 
 DrawBackGround proc
@@ -443,7 +393,7 @@ DrawCat proc
 	                    pop  ax
 	                    ret
 DrawCat Endp
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 delay proc
 	                    mov  di,00FFAH
 	LOP1:               MOV  CX,700
@@ -462,7 +412,7 @@ delay2 proc
 	                    ret
 delay2 Endp
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 CharacterGravity proc
 ;;yCoord represents the y coordinate of the character (at his leg)
 	MOVINGPLAYERDOWN:   
@@ -548,7 +498,90 @@ ENDMOVING:
 	
 
 CharacterGravity Endp
+;;;;;;;;;;;;;;;;;;;;;;;;; DOG GRAVITY ;;;;;;;;;;;;;;;;;;;;
+DOG_CharacterGravity proc
+;;yCoord represents the y coordinate of the character (at his leg)
+	D_MOVINGPLAYERDOWN:   
+	                    MOV  AX , yd               
+						add  AX , dog_H
+						CMP  AX , secondstepline     ;;Check if the cat body is above than the second step
+						JLE  D_CHECKBEFOREENDSTEP2     ;;if yes jump to this label to make cat land at this step or fall if the cat is not in same x Coord of the step
+						SUB  AX , dog_H  
+	                    CMP  AX , firststepline      ;;Same as the above
+	                    JLE  D_CHECKBEFOREEND               	
+	D_CONTMOVING:         MOV  AX , GravityAccleration  ;;if the character jumps on the air he should fall to the ground and this label is responsible for that
+	                    ADD  yd , AX                  	
+	                    MOV  AX , yd
+	                    add  AX , dog_H
+	                    CMP  AX,LandLine             ;;if the character reaches the ground we stop the gravity effect , else it continue to fall        	
+	                    Jge  D_ENDMOVING
+	                    call waitForNewVR
+	                    call UpdatedBackground    
+						call DrawHeart        	
+	                    call DrawCat                      	
+	                    call DrawDog
+	                    ;call delay2                       	
+	                    jmp D_MOVINGPLAYERDOWN
+					 
+D_CHECKBEFOREEND:     ;;This label is for checking if the cat at the X coordinates of the step or not (for first two steps)
+	                    MOV  BX , xd
+	                    CMP  BX ,35
+	                    JGE  D_SECONDCHECK
+	                    JMP  D_CONTMOVING
+	D_SECONDCHECK:        CMP  BX,125
+	                    JLE  D_LANDONSTEP    ;;if the character between x Coordinates of the first step we jump to this label in order to make the character lands on step
+	                    JMP  D_CHECKBEFOREEND2
+	D_CHECKBEFOREEND2:    MOV  BX , xd
+	                    CMP  BX ,190
+	                    JGE  D_SECONDCHECK2
+	                    JMP  D_CONTMOVING
+	D_SECONDCHECK2:       CMP  BX,275
+	                    JLE  D_LANDONSTEP   ;;if the character between x Coordinates of the second step we jump to this label in order to make the character lands on step
+	                    JMP  D_CONTMOVING
+	;;This label is for checking if the cat at the X coordinates of the third step 
+	D_CHECKBEFOREENDSTEP2: MOV  BX , xd
+	                    CMP  BX ,80
+	                    JGE  D_SECONDCHECKSTEP2
+	                    JMP  D_CONTMOVING
+	D_SECONDCHECKSTEP2:   CMP  BX,210
+	                    JLE  D_LANDONSTEP2 ;;if the character between x Coordinates of the above step we jump to this label in order to make the character lands on step
+	                    JMP  D_CONTMOVING
+ D_ENDMOVING:
+	                    MOV  AX , GravityAccleration
+	                    sub  yd , AX
+	                    ret
 
+	D_LANDONSTEP:         call waitForNewVR
+	                    call UpdatedBackground            	;;Remove the old position
+						call DrawHeart
+	                    call DrawCat                      	;;Draw with new onw
+	                    call DrawDog
+	                    ;call delay2                       	;;Draw with new onw
+	                    MOV  AX , GravityAccleration
+	                    ADD  yd , AX
+	                    MOV  AX , yd
+	                    add  AX , dog_H
+	                    CMP  AX,firststepline             	;;if they are greater or equal to the landline (ground)
+	                    Jge  D_ENDMOVING
+	                    JMP  D_LANDONSTEP
+
+	D_LANDONSTEP2:        call waitForNewVR
+	                    call UpdatedBackground            	;;Remove the old position
+						call DrawHeart
+	                    call DrawCat                      	;;Draw with new onw
+	                    call DrawDog
+	                    ;call delay2                       	;;Draw with new onw
+	                    MOV  AX , GravityAccleration
+	                    ADD  yd , AX
+	                    MOV  AX , yd
+	                    add  AX , dog_H
+	                    CMP  AX,secondstepline           	;;if they are greater or equal to the landline (ground)
+	                    Jge  D_ENDMOVING
+	                    JMP  D_LANDONSTEP2
+	
+
+DOG_CharacterGravity Endp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 waitForNewVR PROC
 
 	;Wait for bit 3 to be zero (not in VR).
@@ -793,7 +826,7 @@ RET
 Draw_Health_Bar ENDP
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  Draw Fish ;;;;;;;;;;;;;;;;;;;;;;;;;;
+;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  Draw Fish >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DrawFish proc
                    push ax
 	               MOV  AH,0Bh
@@ -826,7 +859,41 @@ DrawFish proc
 	               ret
 
 DrawFish Endp
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  Draw Dog ;;;;;;;;;;;;;;;;;;;;;;
+;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  Draw Ball >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+DrawBall proc
+                   push ax
+	               MOV  AH,0Bh
+	               MOV  CX, ball_W
+	               MOV  DX, ball_H
+	               mov  DI, offset ball_img
+	               jmp  Startball
+	Drawba:        
+	               MOV  AH,0Ch
+	               mov  al, [DI]
+	               CMP  al,16
+	               JZ   Startball
+	               MOV  BH,00h
+	               add  cx,xball
+	               add  dx,yball
+	               INT  10h
+	               sub  cx , xball
+	               sub  dx , yball
+	Startball:      
+	               inc  DI
+	               DEC  Cx
+	               JNZ  Drawba
+	               mov  Cx, ball_W
+	               DEC  DX
+	               JZ   ENDball
+	               Jmp  Drawba
+
+	ENDball:     
+	               pop  ax
+	               ret
+
+DrawBall Endp
+
+;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  Draw Dog >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DrawDog	   proc
                  push ax
 	               MOV  AH,0Bh
@@ -858,74 +925,308 @@ DrawDog	   proc
 	               pop  ax
 	               ret
 DrawDog	  endp  
-;;;;;;;;;;;;;;;;;;;; Cat Hits The Dog  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Dog Hits The Cat >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+DogHitCat proc
+                   mov start_balling ,1
+; initial draw for the ball 
+                   mov BX ,xd
+	               mov DX, yd ; start position y for the fish
+	               mov  xball , BX
+	               mov  yball , DX
+	               call DrawBall 
+                    
+; set coordinates of the target "dog"
+
+				   mov cx, yCoord ; y above coordiante of the cat
+				   sub cx, cat_H ; (Y above - cat height)
+				   mov ybelow_cat ,cx ; y below coordiante of the cat 
+
+				   mov cx, xCoord; x above coordiante of the cat
+				   sub cx, cat_W ; (X above - cat width)
+				   mov xleft_cat ,cx ; x below coordiante of the cat 
+				  
+; loop for ball movement till it hits the cat or reaches end of the screen				    
+			repeat2: 
+			        ; determine direction of the hit
+                    mov bx , xd
+			        cmp bx ,xCoord; compare xdog with x cat 
+					ja decrease_Xball ; if Xdog > Xcat decrease ball position x	
+					mov cx,4             ; else increase ball position x	 
+                    add  xball , cx            
+	 continue_draw2:
+				    mov bx, xball ; store ball new position x in bx 
+				;	mov dx, xCoord ; postion of colliosion (X Dog-10)
+				;	sub dx,10 ; stop point
+				;	push dx  ;  save point of colliosion on stack
+					push bx ; save fish position x on the stack
+; re draw all screen componenets including the ball
+					call waitForNewVR
+					;call delay2
+					call UpdatedBackground  
+					call DrawDog ; at new postion
+					call DrawCat
+					call DrawBall
+                    call DOG_CharacterGravity
+				    call read_the_key
+					pop bx
+					;pop dx
+ ; reaches dog x right position?                   
+					cmp bx,xCoord
+					jbe check_Xleft_cat ; make sure it is in the x range of the dog
+                    continuee2:	; if not continue looping		
+					mov ax,300 ; end of the screen
+					cmp bx, ax  ; the fish reaches end of the screen?
+					jae finish2 ; end of the loop
+                   
+			     	loop repeat2 
+
+            finish2: 
+			mov start_balling ,0
+			ret 
+
+			check_Xleft_cat:
+			            cmp bx , xleft_cat
+			            jae check_Ybelow_cat ; make sure it matches y position too!
+						jmp continuee2 ; if no return yo continue
+
+		check_Ybelow_cat: mov cx, yball ; store y fish in cx
+			              cmp cx, ybelow_cat ; check Yfish >= y below ?
+				          jae check_Yabove_cat ; if yes: check Yfish <= y below ?
+						  jmp continuee2  ; if no
+		check_Yabove_cat: cmp cx, yCoord; check Yfish <= y above?
+                          jbe decHealthCatDone; if yes (cat hits the dog )
+						  jmp continuee2  ; if no
+						     
+			decrease_Xball: mov cx,4
+                            sub xball , cx
+			                jmp continue_draw2 		
+
+          ;;;;;;;;;;;;;;;;; hit effect decrease health of the dog  ;;;;;;;;;;;;;;;;
+			decHealthCatDone: 	
+ 					     	mov   Player1_DecHealth,1 ;dec health of dog 
+                   		    call Draw_Health_Bar
+						    jmp finish2      	 
+
+DogHitCat endp
+ 
+;<<<<<<<<<<<<<<<<<<<<<<<<<<<< FISH : Cat Hits The Dog  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 CatHitDog proc
+                   mov start_hitting ,1
 ; initial draw for the fish 
                    mov BX , xCoord
-	               add BX, 10 ; start position x for the fish
+	              ; sub BX, 10 ; start position x for the fish
 	               mov DX, yCoord ; start position y for the fish
 	               mov  xf , BX
 	               mov  yf , DX
 	               call DrawFish 
+                   
+                  ; call read_the_key
+; set coordinates of the target "dog"
+
 				   mov cx, yd ; y above coordiante of the dog
-				   sub cx, dog_W ; (Y above - dog width)
+				   sub cx, dog_H ; (Y above - dog width)
 				   mov ybelow_dog ,cx ; y below coordiante of the dog 
+
+				   mov cx, xd ; x above coordiante of the dog
+				   sub cx, dog_W ; (X above - dog width)
+				   mov xleft_dog ,cx ; x below coordiante of the dog 
+
+
+				  
 ; loop for fish movement till it hits the dog or reaches end of the screen				    
 			repeat: 
 			        ; determine direction of the hit
                     mov bx , xCoord
 			        cmp bx ,xd ; compare xdog with x cat 
-					jb increase_Xfish ; if Xcat < Xdog increase fish position x	
-					sub xf , 4           ; if Xcat > Xdog decrease fish position x	
+					jb increase_Xfish ;RIGHT: if Xcat < Xdog increase fish position x	
+                    mov direction_of_hitting ,0 ;LEFT : else
+					mov cx,6
+                    sub xf , cx ;decrease fish position x	
 	 continue_draw:
 				    mov bx, xf ; store fish position x in bx 
+                  ;  sub bx, fish_W
 					mov dx, xd ; postion of colliosion (X Dog-10)
 					sub dx,10 ; stop point
 					push dx  ;  save point of colliosion on stack
-					push bx ; save fi sh position x
+					push bx ; save fish position x
 					; re draw all screen componenets including the fish
 					call waitForNewVR
 					;call delay2
 					call UpdatedBackground  
-					call DrawHeart
-					call DrawHeart2
 					call DrawDog
 					call DrawCat
+                    
 					call DrawFish 
+                     call CharacterGravity
+					 call read_the_key
 					pop bx
 					pop dx
-					cmp dx,bx ; reaches dog x position?
-					je check_Ybelow ; make sure it matches y position too!
-                    continuee:	; if not continue looping		
+; check if fish reaches dog x right position?       
+                    cmp direction_of_hitting ,0 ; was it left hitting ? 
+                    je left_hitting; if yes compare with Xleft of the fist  <<<  DOG*boom*O==<
+		   yarab:	cmp bx,xd   ; if No compare with Xright of the fist  <<<  O==<*boom*DOG
+					jbe check_Xleft ; make sure it is in the x range of the dog
+;if not continue looping	
+                    continuee:		
 					mov ax, 300 ; end of the screen
 					cmp bx, ax  ; the fish reaches end of the screen?
 					jae finish ; end of the loop
+                   
 			     	loop repeat 
 
-            finish: ret  
+            finish: 
+			mov start_hitting ,0
+			ret 
+
+			check_Xleft:
+			            cmp bx , xleft_dog 
+			            jae check_Ybelow ; make sure it matches y position too!
+						jmp continuee ; if no return yo continue
 
 			check_Ybelow: mov cx, yf ; store y fish in cx
+                          sub cx , Fish_H
 			              cmp cx, ybelow_dog ; check Yfish >= y below ?
 				          jae check_Yabove ; if yes: check Yfish <= y below ?
 						  jmp continuee  ; if no
 			check_Yabove: cmp cx, yd; check Yfish <= y above?
-                          jbe decHealthDogDone ; if yes (cat hits the dog )
+                          jbe decHealthDogDone; if yes (cat hits the dog )
 						  jmp continuee  ; if no
 						     
-			increase_Xfish: add xf, 4  
+			increase_Xfish: mov cx,4
+                            add xf , cx
 			               jmp continue_draw 	
 
-						decHealthDogDone: 	
- 						mov   Player2_DecHealth,1 ;dec health of dog 
-                   		call Draw_Health_Bar
-						jmp finish     
-						  					   		 
+            left_hitting: sub bx, fish_W               	
+                          jmp yarab
+          ;;;;;;;;;;;;;;;;; hit effect decrease health of the dog  ;;;;;;;;;;;;;;;;
+			decHealthDogDone: 	
+ 					     	mov   Player2_DecHealth,1 ;dec health of dog 
+                   		    call Draw_Health_Bar
+						    jmp finish      	 
 
 CatHitDog endp
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PowerUps;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< READ KEY >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+read_the_key  proc 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  CHECK:                mov  ah,1
+	                    int  16h
+                        jz   reyooo
+                        mov  ah,0
+	                    int  16h
+
+;;;;;;;;;;;;;;;;;;;;;; cat movment ;;;;;;;;;;;;;;;;;;;;;
+                        cmp  ah,44  ; Z
+	                    jz   reFish_Hit 
+
+	                    cmp  ah,75 ; <=
+	                    jz   MoveLeft
+
+	                    cmp  ah,77 ; =>
+	                    jz   MoveRight
+
+	                    cmp  ah, 45 ; X
+	                    jz   JUMPUP
+;;;;;;;;;;;;;;;;;;;;;; dog movment ;;;;;;;;;;;;;;;;;;;;;
+                        cmp  ah,30   ; A
+	                    jz   dog_MoveLeft
+
+	                    cmp  ah,32 ; D
+	                    jz   dog_MoveRight
+
+	                    cmp  ah, 17 ; w
+	                    jz   dog_JUMPUP
+
+                        cmp  ah, 35 ; H
+	                    jz   BallHit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;						
+
+	ReadKey:           
+	                    call waitForNewVR
+	                    call UpdatedBackground
+						call DrawHeart
+	                    ; mov  HealthBarPos, 'F'            	; stands for first player's health bar
+	                    ; call Draw_Health_Bar
+	                    ; mov  HealthBarPos, 'S'            	; stands for second player's health bar
+	                    ; call Draw_Health_Bar
+	                    call DrawCat
+	                    call DrawDog
+	                    call CharacterGravity
+						call DOG_CharacterGravity
+	                    ;call delay
+	                    jmp  CHECK
+;;;;;;;;;;;;;;;;;;;;;;;;;;; CAT MOVEMENT LABLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;						
+	MoveLeft:           
+	                    cmp  xCoord, 0
+	                    jle  ReadKey
+	                    sub  xCoord,6
+                        jmp kamel_darb
+	                    jmp  ReadKey
+
+	MoveRight:          cmp  xCoord, 292
+	                    jge  ReadKey
+	                    add  xCoord , 6
+                        jmp kamel_darb
+	                    jmp  ReadKey
+	JUMPUP:             
+	                    sub  yCoord , 46
+                        jmp kamel_darb
+	                    jmp  ReadKey
+
+;;;;;;;;;;;;;;;;;;;;;; temp lables ;;;;;;;;;;;;;;;;;;;
+reyooo: jmp yooo
+reFish_Hit: jmp Fish_Hit
+;;;;;;;;;;;;;;;;;;;;;; DOG MOVEMENT LABLES ;;;;;;;;;;;;;;;;;;;;;
+     dog_MoveLeft:           
+	                    cmp xd, 2
+	                    jle  ReadKey
+	                    sub  xd,6
+                        jmp kamel_ball
+	                    jmp  ReadKey
+
+	dog_MoveRight:      cmp xd, 285
+	                    jae  ReadKey
+	                    add  xd , 6
+                        jmp kamel_ball
+	                    jmp  ReadKey
+	dog_JUMPUP:        
+                        sub  yd, 46
+                        jmp kamel_ball
+	                    jmp  ReadKey
+;;;;;;;;;;;;;;;;;; ball hit  ;;;;;;;;;;;;;;;;;;;;
+    BallHit:
+                   call DogHitCat
+                   jmp ReadKey
+;;;;;;;;;;;;;;;;;; fish hit ;;;;;;;;;;;;;;;;;;
+	Fish_Hit:           
+	                    call CatHitDog
+                        
+						jmp  ReadKey
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;; TO READ KEY WHILE HITTING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    kamel_darb: cmp start_hitting ,1
+                        je bye
+                        jmp  ReadKey
+
+    kamel_ball: cmp start_balling ,1
+                        je bye
+                        jmp  ReadKey   
+;;;;;;;;;;;;;;;;;;;;;;;;;;;to check if key not pressd while hitting or not ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;						                 
+
+     yooo:      cmp start_hitting , 1
+                je bye
+                cmp start_balling , 1
+                je bye
+                mov ah,1
+                int 16h
+                jz Again
+                jmp ReadKey  
+      Again: jmp CHECK  
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;; FINISH ;;;;;;;;;;;;;;;;;;;;;;;;                  
+    bye: ret
+
+read_the_key endp
+;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  PowerUps >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DrawHeart proc
 
 
