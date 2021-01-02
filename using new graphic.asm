@@ -30,7 +30,7 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;End Power Ups;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	xCoord dw ? ;  cat x coordinate
 	yCoord dw  ? ;  cat y coordinate
-	 xleft_cat dw ?  ; cat x coordinate (left)
+	 xright_cat dw ?  ; cat x coordinate (left)
 	ybelow_cat dw ?  ; cat y coordinate (below)
 	cat_img                   DB  16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 22, 22, 22, 22, 20, 19, 22, 19
 	                          DB  22, 20, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18, 20, 24, 24, 24, 28, 29, 29, 29, 24, 23, 27, 21, 29, 22, 16, 16, 16, 16, 16, 16, 16, 16, 16, 19, 25, 26, 24
@@ -110,28 +110,28 @@ fish_W equ 20  ; fish width
  dog_W   equ 30; dog width
 	dog_H   equ 25  ;dog height
 	xd dw ?  ; dog x coordinate
-	 xleft_dog dw ?  ; dog x coordinate (left)
+	 xright_dog dw ?  ; dog x coordinate (left)
     yd dw ?  ; dog y coordinate
 	ybelow_dog dw ?  ; dog y coordinate (below)
-	dog_img DB 16, 16, 187, 186, 186, 186, 186, 186, 16, 16, 16, 137, 137, 139, 139, 139, 138, 186, 16, 16, 16, 186, 137, 139, 139, 163, 186, 16, 16, 16, 16, 186, 212, 27, 27, 27, 27, 139, 137, 186 
- DB 187, 114, 139, 89, 91, 90, 164, 186, 16, 16, 16, 186, 139, 90, 90, 164, 186, 16, 16, 16, 137, 138, 26, 90, 27, 139, 139, 139, 6, 6, 6, 42, 140, 24, 91, 91, 27, 138, 187, 187 
- DB 187, 138, 27, 89, 12, 138, 186, 16, 16, 16, 211, 27, 91, 90, 65, 6, 115, 140, 42, 65, 66, 12, 65, 89, 91, 91, 24, 27, 91, 91, 91, 27, 164, 66, 42, 6, 114, 187, 16, 16 
- DB 114, 65, 66, 65, 42, 140, 140, 42, 42, 89, 90, 65, 42, 12, 66, 24, 25, 90, 91, 91, 91, 90, 26, 24, 66, 65, 114, 187, 16, 16, 187, 140, 42, 42, 42, 42, 42, 12, 66, 90 
- DB 66, 65, 12, 66, 90, 89, 90, 91, 91, 91, 91, 91, 90, 89, 91, 65, 114, 187, 16, 16, 187, 140, 42, 42, 42, 42, 42, 12, 90, 90, 66, 66, 89, 91, 91, 91, 91, 90, 90, 90 
- DB 91, 91, 91, 91, 91, 89, 138, 187, 16, 16, 137, 6, 6, 42, 42, 42, 42, 12, 90, 90, 66, 90, 91, 91, 91, 91, 90, 91, 91, 91, 90, 91, 91, 91, 91, 91, 163, 187, 16, 16 
- DB 186, 186, 114, 138, 6, 140, 42, 12, 90, 90, 66, 91, 91, 91, 90, 91, 91, 91, 90, 91, 91, 91, 91, 90, 91, 90, 139, 187, 16, 16, 16, 16, 16, 186, 186, 137, 6, 140, 65, 90 
- DB 90, 89, 90, 90, 90, 91, 91, 91, 91, 91, 91, 91, 90, 90, 89, 65, 137, 187, 16, 16, 16, 16, 16, 16, 16, 16, 211, 114, 139, 65, 65, 65, 65, 65, 89, 91, 91, 91, 91, 91 
- DB 91, 91, 91, 89, 65, 115, 186, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 164, 114, 12, 65, 42, 65, 66, 91, 91, 30, 30, 30, 30, 30, 91, 91, 91, 66, 6, 114, 187, 16, 16 
- DB 16, 16, 16, 16, 16, 16, 16, 164, 211, 138, 140, 65, 90, 91, 30, 29, 29, 90, 90, 90, 29, 29, 30, 91, 90, 65, 114, 187, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 211 
- DB 114, 65, 91, 30, 30, 30, 24, 233, 160, 136, 162, 30, 30, 30, 91, 65, 114, 187, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 212, 114, 65, 91, 91, 91, 26, 26, 24, 232, 23 
- DB 28, 25, 90, 91, 91, 65, 114, 187, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 137, 114, 140, 89, 91, 91, 90, 65, 137, 210, 211, 12, 89, 91, 91, 90, 164, 137, 211, 16, 16 
- DB 16, 16, 16, 16, 16, 16, 16, 16, 16, 212, 114, 42, 65, 66, 64, 140, 140, 42, 42, 42, 42, 140, 64, 66, 66, 42, 114, 187, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 212 
- DB 114, 140, 42, 138, 235, 233, 137, 42, 42, 42, 140, 18, 160, 137, 42, 42, 114, 187, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 114, 6, 42, 42, 42, 6, 210, 6, 12, 89, 65 
- DB 140, 187, 137, 42, 42, 42, 6, 114, 187, 16, 16, 16, 16, 16, 16, 16, 16, 24, 139, 138, 65, 66, 64, 140, 42, 42, 42, 42, 66, 65, 42, 42, 42, 42, 12, 66, 65, 138, 137, 138 
- DB 16, 16, 16, 16, 16, 16, 16, 164, 210, 65, 90, 87, 88, 164, 137, 6, 140, 140, 140, 140, 140, 140, 115, 139, 26, 89, 90, 65, 114, 186, 16, 16, 16, 16, 16, 16, 16, 114, 138, 89 
- DB 90, 90, 89, 138, 186, 186, 186, 186, 186, 186, 186, 211, 211, 137, 65, 90, 90, 90, 140, 187, 16, 16, 16, 16, 16, 16, 16, 187, 140, 90, 90, 66, 139, 114, 16, 16, 16, 16, 16, 16 
- DB 16, 16, 16, 210, 115, 65, 89, 90, 12, 187, 16, 16, 16, 16, 16, 16, 16, 187, 6, 66, 164, 137, 211, 209, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 186, 138, 140, 89, 164, 187 
- DB 16, 16, 16, 16, 16, 16, 16, 164, 114, 137, 114, 186, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 186, 186, 138, 114, 186
+	dog_img DB 16, 16, 16, 16, 16, 16, 16, 24, 21, 18, 18, 24, 19, 18, 18, 18, 232, 21, 18, 18, 18, 18, 18, 18, 18, 18, 209, 24, 24, 16, 16, 16, 16, 16, 16, 16, 16, 19, 233, 65 
+ DB 65, 232, 28, 22, 163, 65, 163, 236, 24, 24, 65, 65, 65, 24, 24, 65, 24, 232, 233, 23, 16, 16, 16, 16, 16, 16, 16, 19, 234, 164, 65, 65, 233, 164, 65, 162, 235, 163, 18, 235 
+ DB 65, 65, 65, 161, 21, 20, 20, 164, 24, 18, 16, 16, 16, 16, 16, 16, 16, 16, 19, 233, 164, 65, 234, 164, 65, 162, 18, 18, 232, 65, 65, 65, 65, 24, 21, 19, 18, 234, 24, 18 
+ DB 16, 16, 16, 16, 16, 16, 16, 16, 16, 21, 18, 65, 138, 164, 65, 162, 19, 22, 22, 164, 65, 65, 65, 65, 138, 18, 18, 234, 163, 18, 16, 16, 18, 18, 18, 19, 16, 16, 16, 21 
+ DB 18, 163, 163, 163, 163, 163, 25, 30, 28, 18, 65, 65, 65, 65, 138, 18, 16, 232, 224, 31, 21, 224, 23, 23, 23, 22, 224, 232, 22, 232, 224, 23, 23, 23, 23, 26, 29, 29, 28, 18 
+ DB 65, 65, 65, 164, 137, 18, 16, 16, 16, 16, 21, 18, 29, 30, 30, 27, 24, 25, 24, 24, 24, 24, 24, 24, 24, 26, 30, 29, 29, 24, 138, 138, 138, 236, 232, 16, 16, 16, 16, 16 
+ DB 21, 18, 29, 30, 30, 30, 26, 22, 22, 22, 22, 164, 164, 164, 164, 163, 24, 30, 30, 29, 25, 19, 18, 18, 16, 16, 16, 16, 16, 16, 21, 18, 21, 28, 30, 25, 20, 234, 164, 164 
+ DB 18, 236, 24, 65, 65, 24, 163, 23, 30, 30, 30, 19, 18, 16, 16, 16, 16, 16, 16, 16, 21, 18, 26, 29, 30, 23, 137, 24, 24, 234, 18, 18, 235, 164, 65, 65, 164, 224, 21, 21 
+ DB 21, 19, 19, 16, 16, 16, 16, 16, 16, 16, 21, 18, 28, 29, 23, 19, 138, 65, 24, 18, 18, 18, 18, 164, 65, 65, 65, 163, 18, 232, 232, 232, 16, 16, 16, 16, 16, 16, 16, 16 
+ DB 21, 19, 19, 19, 26, 23, 138, 65, 65, 164, 18, 18, 164, 65, 65, 163, 232, 236, 164, 232, 29, 229, 224, 19, 28, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18, 162, 65, 163, 18, 209 
+ DB 24, 65, 65, 65, 138, 18, 18, 18, 232, 65, 18, 24, 65, 138, 19, 20, 16, 16, 16, 16, 16, 16, 16, 229, 18, 162, 162, 18, 18, 18, 18, 65, 65, 65, 138, 232, 229, 19, 233, 65 
+ DB 18, 24, 65, 65, 162, 234, 19, 16, 16, 16, 16, 16, 232, 234, 18, 162, 162, 232, 20, 20, 18, 65, 65, 65, 138, 24, 30, 26, 232, 65, 18, 24, 65, 65, 65, 163, 18, 16, 16, 16 
+ DB 21, 19, 235, 24, 138, 23, 162, 22, 30, 27, 18, 65, 65, 65, 162, 23, 24, 18, 137, 65, 18, 24, 65, 65, 65, 164, 235, 19, 16, 16, 235, 137, 65, 65, 24, 163, 139, 163, 25, 18 
+ DB 137, 65, 65, 65, 65, 164, 137, 139, 65, 65, 137, 163, 24, 65, 65, 65, 164, 18, 16, 16, 209, 65, 65, 65, 65, 138, 138, 164, 138, 138, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65 
+ DB 65, 232, 164, 24, 65, 65, 164, 18, 16, 16, 20, 65, 65, 65, 65, 138, 138, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 232, 164, 65, 65, 65, 164, 18, 16, 16 
+ DB 20, 65, 65, 65, 65, 164, 139, 163, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 138, 65, 163, 24, 65, 164, 138, 138, 232, 16, 16, 233, 138, 138, 24, 65, 65, 162, 137, 65, 65 
+ DB 65, 65, 65, 65, 65, 65, 65, 24, 162, 22, 138, 138, 138, 138, 137, 18, 18, 16, 16, 16, 21, 224, 224, 137, 164, 65, 24, 24, 24, 138, 65, 65, 65, 65, 65, 65, 164, 163, 22, 27 
+ DB 224, 224, 224, 224, 19, 16, 16, 16, 16, 16, 16, 16, 16, 229, 235, 234, 234, 234, 234, 20, 234, 65, 65, 65, 65, 163, 21, 22, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16 
+ DB 16, 16, 16, 16, 229, 19, 19, 19, 19, 21, 19, 233, 233, 233, 233, 234, 19, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;; ball variables ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ball_W equ 15 ; ball width
     ball_H equ 10 ; ball  height
@@ -144,8 +144,29 @@ ball_W equ 15 ; ball width
             DB 54, 54, 54, 54, 54, 54, 54, 54, 125, 16, 16, 149, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 54, 125, 16, 16, 223, 125, 54, 54, 54, 54, 54, 54, 54, 54, 54, 126, 198, 16 
             DB 16, 17, 18, 198, 54, 54, 54, 54, 54, 54, 54, 198, 18, 17, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16                                                                                                                                                                                                      		;;Cat Moving Variables
             ​ 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-​                                                                                                                                                                                                           		;;Cat Moving Variables
+;;;;;;;;;;; LOGO cat & dog ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+catlo_W equ 15  
+    catlo_H equ 15  
+	xcatlo dw 2  
+	ycatlo dw  8  
+​   logo_cat_img DB 16, 16, 16, 16, 32, 32, 55, 55, 55, 32, 32, 30, 32, 32, 16, 16, 16, 16, 16, 55, 53, 52, 52, 52, 53, 55, 32, 53, 54, 32, 16, 16, 176, 55, 53, 54, 54, 52, 52, 52 
+ DB 53, 53, 52, 54, 32, 16, 16, 176, 55, 53, 54, 53, 52, 52, 52, 52, 53, 53, 54, 32, 16, 16, 29, 224, 9, 53, 52, 52, 52, 53, 9, 127, 53, 54, 32, 16, 16, 16, 25, 27 
+ DB 56, 54, 54, 54, 56, 28, 25, 1, 32, 16, 16, 17, 18, 27, 20, 23, 27, 27, 27, 23, 21, 27, 18, 17, 16, 16, 16, 24, 23, 148, 151, 28, 28, 28, 220, 24, 24, 23, 16, 16 
+ DB 16, 16, 24, 27, 21, 24, 28, 28, 28, 23, 21, 27, 23, 16, 16, 16, 18, 25, 28, 28, 28, 28, 28, 28, 28, 28, 28, 24, 18, 16, 16, 21, 23, 28, 28, 28, 28, 28, 28, 28 
+ DB 28, 28, 23, 20, 17, 19, 24, 25, 26, 28, 28, 28, 28, 28, 28, 28, 26, 25, 24, 19, 21, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 21, 16, 16, 16, 20, 25 
+ DB 28, 28, 28, 28, 26, 23, 16, 16, 16, 16, 16, 16, 16, 17, 18, 20, 20, 20, 20, 19, 17, 16, 16, 16, 16
+ ;************************************
+ doglo_W equ 15  
+    doglo_H equ 15  
+	xdoglo dw 301  
+	ydoglo dw  8  
+​   logo_dog_img DB 16, 224, 19, 30, 16, 16, 18, 18, 25, 30, 22, 16, 16, 16, 16, 18, 25, 26, 232, 18, 18, 26, 26, 28, 29, 22, 16, 16, 16, 16, 18, 28, 30, 28, 26, 26, 137, 137, 24, 30 
+ DB 29, 20, 28, 16, 16, 18, 24, 29, 20, 162, 235, 163, 65, 164, 25, 30, 23, 28, 16, 16, 18, 28, 28, 138, 164, 18, 18, 164, 65, 234, 19, 19, 16, 16, 16, 18, 23, 24, 138, 24 
+ DB 235, 235, 24, 163, 138, 20, 19, 18, 16, 16, 16, 23, 229, 24, 233, 138, 65, 164, 18, 18, 163, 162, 164, 234, 16, 16, 18, 18, 162, 18, 18, 65, 164, 23, 23, 163, 162, 65, 163, 18 
+ DB 18, 138, 138, 162, 27, 21, 65, 24, 25, 19, 164, 162, 65, 24, 233, 236, 24, 164, 139, 23, 236, 65, 65, 164, 164, 24, 139, 65, 65, 139, 161, 65, 65, 138, 164, 24, 65, 65, 65, 65 
+ DB 65, 138, 65, 65, 139, 162, 65, 65, 138, 65, 65, 65, 65, 65, 65, 164, 164, 65, 164, 138, 233, 138, 65, 163, 24, 65, 65, 65, 65, 164, 21, 234, 234, 233, 18, 16, 18, 138, 163, 139 
+ DB 138, 65, 65, 164, 19, 16, 16, 16, 16, 16, 16, 16, 18, 18, 18, 18, 137, 137, 235, 16, 16, 16, 16, 16, 16
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;                                                                                                                                                                                                         		;;Cat Moving Variables
 ​ 
 	;;Gravity Variables
 	GravityRange              dw  ?
@@ -213,6 +234,8 @@ MAIN PROC FAR
 						call GenerateRandomNumber
                         call GenerateRandomPowerUp2
                         call DrawHeart2
+						call DrawCatLogo
+						call DrawDogLogo	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	CatDrawing:         
 	                    mov  BX , 0
@@ -226,7 +249,10 @@ MAIN PROC FAR
 						mov DX  ,115
 						mov  xd, BX
 						mov  yd , DX
-						call DrawDog	   
+						call DrawDog	 
+     
+						   						  
+
 					
 					 ;call CharacterGravity
 
@@ -924,7 +950,71 @@ DrawDog	   proc
 	ENDINGdog:     
 	               pop  ax
 	               ret
-DrawDog	  endp  
+DrawDog	  endp 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Logo cat drawing ;;;;;;;;;;;;;;;;;;;;;;;;;
+DrawCatLogo proc
+                   push ax
+	               MOV  AH,0Bh
+	               MOV  CX, catlo_W
+	               MOV  DX, catlo_H
+	               mov  DI, offset logo_cat_img 
+	               jmp  StartClogo
+	DrawdClogo:        
+	               MOV  AH,0Ch
+	               mov  al, [DI]
+	               CMP  al,16
+	               JZ   StartClogo
+	               MOV  BH,00h
+	               add  cx,xcatlo
+	               add  dx,ycatlo
+	               INT  10h
+	               sub  cx , xcatlo
+	               sub  dx , ycatlo
+	StartClogo:      
+	               inc  DI
+	               DEC  Cx
+	               JNZ  DrawdClogo
+	               mov  Cx, catlo_W
+	               DEC  DX
+	               JZ   ENDINGClogo
+	               Jmp  DrawdClogo
+
+	ENDINGClogo:     
+	               pop  ax
+	               ret
+DrawCatLogo endp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Logo dog drawing ;;;;;;;;;;;;;;;;;;;;;;;;;
+DrawDogLogo proc
+                   push ax
+	               MOV  AH,0Bh
+	               MOV  CX, doglo_W
+	               MOV  DX, doglo_H
+	               mov  DI, offset logo_dog_img 
+	               jmp  StartDlogo
+	DrawdDlogo:        
+	               MOV  AH,0Ch
+	               mov  al, [DI]
+	               CMP  al,16
+	               JZ   StartDlogo
+	               MOV  BH,00h
+	               add  cx,xdoglo
+	               add  dx,ydoglo
+	               INT  10h
+	               sub  cx , xdoglo
+	               sub  dx , ydoglo
+	StartDlogo:      
+	               inc  DI
+	               DEC  Cx
+	               JNZ  DrawdDlogo
+	               mov  Cx, doglo_W
+	               DEC  DX
+	               JZ   ENDINGDlogo
+	               Jmp  DrawdDlogo
+
+	ENDINGDlogo:     
+	               pop  ax
+	               ret
+DrawDogLogo endp
 ;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Dog Hits The Cat >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DogHitCat proc
                    mov start_balling ,1
@@ -935,15 +1025,15 @@ DogHitCat proc
 	               mov  yball , DX
 	               call DrawBall 
                     
-; set coordinates of the target "dog"
+; set coordinates of the target "Cat"
 
 				   mov cx, yCoord ; y above coordiante of the cat
 				   sub cx, cat_H ; (Y above - cat height)
 				   mov ybelow_cat ,cx ; y below coordiante of the cat 
 
 				   mov cx, xCoord; x above coordiante of the cat
-				   sub cx, cat_W ; (X above - cat width)
-				   mov xleft_cat ,cx ; x below coordiante of the cat 
+				   add cx, cat_W ; (X Right + cat width)
+				   mov xright_cat ,cx ; x below coordiante of the cat 
 				  
 ; loop for ball movement till it hits the cat or reaches end of the screen				    
 			repeat2: 
@@ -951,7 +1041,7 @@ DogHitCat proc
                     mov bx , xd
 			        cmp bx ,xCoord; compare xdog with x cat 
 					ja decrease_Xball ; if Xdog > Xcat decrease ball position x	
-					mov cx,4             ; else increase ball position x	 
+					mov cx,6       ; else increase ball position x	 
                     add  xball , cx            
 	 continue_draw2:
 				    mov bx, xball ; store ball new position x in bx 
@@ -970,9 +1060,9 @@ DogHitCat proc
 				    call read_the_key
 					pop bx
 					;pop dx
- ; reaches dog x right position?                   
-					cmp bx,xCoord
-					jbe check_Xleft_cat ; make sure it is in the x range of the dog
+ ; reaches Cat x right position?                   
+					cmp bx,xCoord ; Xball >= Xleft_cat #compare Xball with Xleft_Cat 
+					jae check_Xright_cat ; make sure it is in the x range of the Cat
                     continuee2:	; if not continue looping		
 					mov ax,300 ; end of the screen
 					cmp bx, ax  ; the fish reaches end of the screen?
@@ -984,9 +1074,9 @@ DogHitCat proc
 			mov start_balling ,0
 			ret 
 
-			check_Xleft_cat:
-			            cmp bx , xleft_cat
-			            jae check_Ybelow_cat ; make sure it matches y position too!
+			check_Xright_cat:
+			            cmp bx , xright_cat; Xcat <= Xright_cat
+			            jbe check_Ybelow_cat ; make sure it matches y position too!
 						jmp continuee2 ; if no return yo continue
 
 		check_Ybelow_cat: mov cx, yball ; store y fish in cx
@@ -997,7 +1087,7 @@ DogHitCat proc
                           jbe decHealthCatDone; if yes (cat hits the dog )
 						  jmp continuee2  ; if no
 						     
-			decrease_Xball: mov cx,4
+			decrease_Xball: mov cx,6
                             sub xball , cx
 			                jmp continue_draw2 		
 
@@ -1028,18 +1118,17 @@ CatHitDog proc
 				   mov ybelow_dog ,cx ; y below coordiante of the dog 
 
 				   mov cx, xd ; x above coordiante of the dog
-				   sub cx, dog_W ; (X above - dog width)
-				   mov xleft_dog ,cx ; x below coordiante of the dog 
+				   add cx, dog_W ; (X Right + dog width)
+				   mov xright_dog ,cx ; x below coordiante of the dog 
 
 
 				  
 ; loop for fish movement till it hits the dog or reaches end of the screen				    
 			repeat: 
-			        ; determine direction of the hit
+ ; determine direction of the hit
                     mov bx , xCoord
 			        cmp bx ,xd ; compare xdog with x cat 
 					jb increase_Xfish ;RIGHT: if Xcat < Xdog increase fish position x	
-                    mov direction_of_hitting ,0 ;LEFT : else
 					mov cx,6
                     sub xf , cx ;decrease fish position x	
 	 continue_draw:
@@ -1055,17 +1144,14 @@ CatHitDog proc
 					call UpdatedBackground  
 					call DrawDog
 					call DrawCat
-                    
 					call DrawFish 
-                     call CharacterGravity
-					 call read_the_key
+                    call CharacterGravity
+					call read_the_key
 					pop bx
 					pop dx
-; check if fish reaches dog x right position?       
-                    cmp direction_of_hitting ,0 ; was it left hitting ? 
-                    je left_hitting; if yes compare with Xleft of the fist  <<<  DOG*boom*O==<
-		   yarab:	cmp bx,xd   ; if No compare with Xright of the fist  <<<  O==<*boom*DOG
-					jbe check_Xleft ; make sure it is in the x range of the dog
+; reaches Dog x right position?  
+		        	cmp bx,xd  ; Xfish >= Xleft_dog #compare Xfish with Xleft_Cat 
+					jae check_Xright ; make sure it is in the x range of the dog
 ;if not continue looping	
                     continuee:		
 					mov ax, 300 ; end of the screen
@@ -1078,9 +1164,9 @@ CatHitDog proc
 			mov start_hitting ,0
 			ret 
 
-			check_Xleft:
-			            cmp bx , xleft_dog 
-			            jae check_Ybelow ; make sure it matches y position too!
+			check_Xright:
+			            cmp bx , xright_dog ; Xfish <= Xright_dog 
+			            jbe check_Ybelow ; make sure it matches y position too!
 						jmp continuee ; if no return yo continue
 
 			check_Ybelow: mov cx, yf ; store y fish in cx
@@ -1088,16 +1174,15 @@ CatHitDog proc
 			              cmp cx, ybelow_dog ; check Yfish >= y below ?
 				          jae check_Yabove ; if yes: check Yfish <= y below ?
 						  jmp continuee  ; if no
+
 			check_Yabove: cmp cx, yd; check Yfish <= y above?
                           jbe decHealthDogDone; if yes (cat hits the dog )
 						  jmp continuee  ; if no
 						     
-			increase_Xfish: mov cx,4
+			increase_Xfish: mov cx,6
                             add xf , cx
 			               jmp continue_draw 	
 
-            left_hitting: sub bx, fish_W               	
-                          jmp yarab
           ;;;;;;;;;;;;;;;;; hit effect decrease health of the dog  ;;;;;;;;;;;;;;;;
 			decHealthDogDone: 	
  					     	mov   Player2_DecHealth,1 ;dec health of dog 
