@@ -543,7 +543,8 @@ DOG_CharacterGravity proc
 	                    Jge  D_ENDMOVING
 	                    call waitForNewVR
 	                    call UpdatedBackground    
-						call DrawHeart        	
+						call DrawHeart  
+						call DrawHeart2      	
 	                    call DrawCat                      	
 	                    call DrawDog
 	                    ;call delay2                       	
@@ -580,6 +581,7 @@ D_CHECKBEFOREEND:     ;;This label is for checking if the cat at the X coordinat
 	D_LANDONSTEP:         call waitForNewVR
 	                    call UpdatedBackground            	;;Remove the old position
 						call DrawHeart
+						call DrawHeart2
 	                    call DrawCat                      	;;Draw with new onw
 	                    call DrawDog
 	                    ;call delay2                       	;;Draw with new onw
@@ -594,6 +596,7 @@ D_CHECKBEFOREEND:     ;;This label is for checking if the cat at the X coordinat
 	D_LANDONSTEP2:        call waitForNewVR
 	                    call UpdatedBackground            	;;Remove the old position
 						call DrawHeart
+						call DrawHeart2
 	                    call DrawCat                      	;;Draw with new onw
 	                    call DrawDog
 	                    ;call delay2                       	;;Draw with new onw
@@ -1053,6 +1056,8 @@ DogHitCat proc
 					call waitForNewVR
 					;call delay2
 					call UpdatedBackground  
+					call DrawHeart
+					call DrawHeart2
 					call DrawDog ; at new postion
 					call DrawCat
 					call DrawBall
@@ -1142,6 +1147,8 @@ CatHitDog proc
 					call waitForNewVR
 					;call delay2
 					call UpdatedBackground  
+					call DrawHeart
+					call DrawHeart2
 					call DrawDog
 					call DrawCat
 					call DrawFish 
@@ -1229,13 +1236,15 @@ read_the_key  proc
 	                    call waitForNewVR
 	                    call UpdatedBackground
 						call DrawHeart
+						call DrawHeart2
 	                    ; mov  HealthBarPos, 'F'            	; stands for first player's health bar
 	                    ; call Draw_Health_Bar
 	                    ; mov  HealthBarPos, 'S'            	; stands for second player's health bar
 	                    ; call Draw_Health_Bar
-	                    call DrawCat
-	                    call DrawDog
+	                    
 	                    call CharacterGravity
+						call DrawCat
+	                    call DrawDog
 						call DOG_CharacterGravity
 	                    ;call delay
 	                    jmp  CHECK
