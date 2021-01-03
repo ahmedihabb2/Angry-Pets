@@ -1701,7 +1701,7 @@ STARTTHEGAME ENDP
 ;;----------------------DRAW BACKGROUND AND THE STEPS--------------------
 DrawBackGround proc
 	                       MOV  CX ,0
-	                       MOV  DX ,0
+	                       MOV  DX ,25
 	                       MOV  AL,0Bh
 	                       MOV  AH,0Ch
 	FILL:                  INT  10h
@@ -1946,7 +1946,7 @@ CharacterGravity proc
 	                       CMP  AX,LandLine                       	;;if the character reaches the ground we stop the gravity effect , else it continue to fall
 	                       Jge  ENDMOVING
 	                       call waitForNewVR
-	                       call UpdatedBackground
+	                       call DrawBackGround
 	                       call DrawHeart
 	                       call DrawHeart2
 						   
@@ -1988,7 +1988,7 @@ ENDMOVINGSTEP2:  MOV yCoord , 43
 RET
 	LANDONSTEP:            call waitForNewVR
 	call delay2
-	                       call UpdatedBackground                 	;;Remove the old position
+	                       call DrawBackGround                 	;;Remove the old position
 	                       call DrawHeart
 	                       call DrawHeart2
 						   
@@ -2005,7 +2005,7 @@ RET
 
 	LANDONSTEP2:           call waitForNewVR
 	call delay2
-	                       call UpdatedBackground                 	;;Remove the old position
+	                       call DrawBackGround              	;;Remove the old position
 	                       call DrawHeart
 						   
 	                       call DrawHeart2
@@ -2041,7 +2041,7 @@ DOG_CharacterGravity proc
 	                       CMP  AX,LandLine                       	;;if the character reaches the ground we stop the gravity effect , else it continue to fall
 	                       Jge  D_ENDMOVING
 	                       call waitForNewVR
-	                       call UpdatedBackground
+	                       call DrawBackGround
 	                       call DrawHeart
 						   
 	                       call DrawHeart2
@@ -2084,7 +2084,7 @@ D_ENDMOVINGSTEP2:  MOV yd , 43
 RET
 
 	D_LANDONSTEP:          call waitForNewVR
-	                       call UpdatedBackground                 	;;Remove the old position
+	                       call DrawBackGround                 	;;Remove the old position
 	                       call DrawHeart
 						   
 	                       call DrawHeart2
@@ -2092,7 +2092,7 @@ RET
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
 						   
-	call delay2                       	;;Draw with new onw
+	;;call delay2                       	;;Draw with new onw
 	                       MOV  AX , GravityAccleration
 	                       ADD  yd , AX
 	                       MOV  AX , yd
@@ -2102,14 +2102,15 @@ RET
 	                       JMP  D_LANDONSTEP
 
 	D_LANDONSTEP2:         call waitForNewVR
-	                       call UpdatedBackground                 	;;Remove the old position
+	call delay2  
+	                       call DrawBackGround                 	;;Remove the old position
 	                       call DrawHeart
 						   
 	                       call DrawHeart2
 						   
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
-	call delay2                       	;;Draw with new onw
+	;;call delay2                       	;;Draw with new onw
 	                       MOV  AX , GravityAccleration
 	                       ADD  yd , AX
 	                       MOV  AX , yd
@@ -2522,7 +2523,7 @@ DogHitCat proc
 	; re draw all screen componenets including the ball
 	                       call waitForNewVR
 	;call delay2
-	                       call UpdatedBackground
+	                       call DrawBackGround
 	                       call DrawHeart
 						   
 	                       call DrawHeart2
@@ -2624,7 +2625,7 @@ CatHitDog proc
 	                       call waitForNewVR
 	;call delay2
 							
-	                       call UpdatedBackground
+	                       call DrawBackGround
 						   
 	                       call DrawHeart
 						   
@@ -2713,29 +2714,33 @@ read_the_key proc
 	                       jz   dog_MoveLeft
 
 	                       cmp  ah,32                             	; D
-	                       jz   dog_MoveRight
+	                       jz   TEMP_DOGMOVERIGHT
 
 	                       cmp  ah, 17                            	; w
-	                       jz   dog_JUMPUP
+	                       jz   TEMP_DOGJUMP
 
 	                       cmp  ah, 35                            	; H
-	                       jz   BallHit
+	                       jz   TEMP_BALLHIT
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	ReadKey:               
-	                       call waitForNewVR
-	                       
+	                       call waitForNewVR        
 	                       call CharacterGravity
                            call DOG_CharacterGravity
-						   call UpdatedBackground
+						   call DrawBackGround
 						   call DrawHeart
-	                       call DrawHeart2
-	                       
+	                       call DrawHeart2         
 						   call DrawCat
 	                       call DrawDog
-						   CALL delay2
-	;call delay
+						   
 	                       jmp  CHECK
+						   ;;;;;;;;;;;;;;;;;;;;;; temp lables ;;;;;;;;;;;;;;;;;;;
+	reyooo:                jmp  yooo
+	reFish_Hit:            jmp  Fish_Hit
+	TEMP_DOGMOVERIGHT:      JMP   dog_MoveRight
+	TEMP_DOGJUMP:          JMP dog_JUMPUP
+	TEMP_BALLHIT:		   JMP BallHit
+	TEMP_READKEY:          JMP ReadKey
 	;;;;;;;;;;;;;;;;;;;;;;;;;;; CAT MOVEMENT LABLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	MoveLeft:              
 	                       cmp  xCoord, 0
@@ -2743,23 +2748,25 @@ read_the_key proc
 	                       sub  xCoord,6
 	                       jmp  kamel_darb
 	                       jmp  ReadKey
-
 	MoveRight:             cmp  xCoord, 292
 	                       jge  ReadKey
 	                       add  xCoord , 6
 	                       jmp  kamel_darb
 	                       jmp  ReadKey
 	JUMPUP:                
-	                       sub  yCoord , 46
-	                       jmp  kamel_darb
+						   cmp yCoord ,70
+						   jle SHORTJUMP
+						   JMP HIGHJUMP
+			SHORTJUMP:     SUB yCoord , 20
+			     			JMP CONTJUMPING
+	        HIGHJUMP:       sub  yCoord , 46
+	         CONTJUMPING:              jmp  kamel_darb
 	                       jmp  ReadKey
 
-	;;;;;;;;;;;;;;;;;;;;;; temp lables ;;;;;;;;;;;;;;;;;;;
-	reyooo:                jmp  yooo
-	reFish_Hit:            jmp  Fish_Hit
+	
 	;;;;;;;;;;;;;;;;;;;;;; DOG MOVEMENT LABLES ;;;;;;;;;;;;;;;;;;;;;
 	dog_MoveLeft:          
-	                       cmp  xd, 2
+	                       cmp  xd, 3
 	                       jle  ReadKey
 	                       sub  xd,6
 	                       jmp  kamel_ball
@@ -2767,13 +2774,17 @@ read_the_key proc
 
 	dog_MoveRight:         cmp  xd, 284
 
-	                       jae  ReadKey
+	                       jae  TEMP_READKEY
 	                       add  xd , 6
 	                       jmp  kamel_ball
 	                       jmp  ReadKey
-	dog_JUMPUP:            
-	                       sub  yd, 46
-	                       jmp  kamel_ball
+	dog_JUMPUP:            cmp yd ,70
+						   jle SHORTJUMPD
+						   JMP HIGHJUMPD
+			SHORTJUMPD:     SUB yd , 20
+			     			JMP CONTJUMPINGD
+	        HIGHJUMPD:               sub  yd, 46
+	        CONTJUMPINGD:              jmp  kamel_ball
 	                       jmp  ReadKey
 	;;;;;;;;;;;;;;;;;; ball hit  ;;;;;;;;;;;;;;;;;;;;
 	BallHit:               
