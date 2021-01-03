@@ -2196,14 +2196,14 @@ SecondPlayerTest:
 
 ;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Increase health
 ;-------------------- check whether the first player caught a powerup to increase his health?------
+
 CheckIncHealthP1:
-                cmp Player1_IncHealth,0
-                je CheckIncHealthP2
-
-;------------- if he caught a powerup then: 
-                cmp Player1_Health_cx,69 ; if his health is full then do nothing
-                je CheckIncHealthP2 
-
+ 				   cmp Player1_IncHealth,0
+                   je CheckIncHealthP2
+				   
+;------------- if he caught a powerup then:
+                cmp Player1_Health_cx,70 ; if his health is full then do nothing
+                jae CheckIncHealthP2 
 IncHealth1:
                 mov cx, Player1_Health_cx
                 mov dx,10
@@ -2218,10 +2218,11 @@ IncHealth1:
                 jb doubleINCHB1
                 jmp countinueHBinc
                 
-                doubleINCHB1: inc Player1_Health_cx 
+                doubleINCHB1: inc Player1_Health_cx
                 jmp IncHealth1
                 countinueHBinc:
                 mov countINC1,0
+                inc Player1_Health_cx
 
 ;-------------------- check whether the second player caught a powerup to increase his health?------
 
@@ -2231,7 +2232,7 @@ CheckIncHealthP2:
 
 ;------------- if he caught a powerup then: 
                 cmp Player2_Health_cx,299 ; if his health is full then do nothing
-                je check_draw_HB
+                jae check_draw_HB
 
 IncHealth2:
                 mov cx, Player2_Health_cx
@@ -2251,6 +2252,8 @@ IncHealth2:
                 jmp IncHealth2
                 countinueHBinc2:
                 mov countINC2,0
+                inc Player2_Health_cx
+
 
 ;---------------------------------- to make sure that it is drawn once ------------------      
 check_draw_HB:  
