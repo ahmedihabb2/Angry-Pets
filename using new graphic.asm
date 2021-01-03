@@ -2209,7 +2209,7 @@ SecondPlayerTest:
 CheckIncHealthP1:
  				   cmp Player1_IncHealth,0
                    je CheckIncHealthP2
-				   
+
 ;------------- if he caught a powerup then:
                 cmp Player1_Health_cx,70 ; if his health is full then do nothing
                 jae CheckIncHealthP2 
@@ -3315,6 +3315,7 @@ GenerateRandomPowerUp2 Endp
 					mov  Player1_DecHealth,0
 					mov  Player1_IncHealth,0
 					mov  Player2_IncHealth,0
+					mov HealthBarDrawn,0
 
 				;clear
 					mov ax,0600h
