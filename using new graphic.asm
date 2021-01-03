@@ -189,7 +189,7 @@
 	LandLine                  dw  142d
 	firststepline             dw  105d
 	secondstepline            dw  69d
-	GravityAccleration        dw  2d
+	GravityAccleration        dw  10d
 	isFalling                 dw  0
 	;detect if the player is falling or not
 	; health bar drawing
@@ -1930,7 +1930,7 @@ waitForNewVR ENDP
 ;-------------------------------GRAVITY HANDLING PROCEDURES-----------------------------------
 
 CharacterGravity proc
-	;;yCoord represents the y coordinate of the character (at his leg)
+	;;yCoord represents the y coordinate of the character (at his head)
 	MOVINGPLAYERDOWN:      
 	                       MOV  AX , yCoord
 	                       add  AX , cat_H
@@ -1964,42 +1964,47 @@ CharacterGravity proc
 	                       JLE  LANDONSTEP                        	;;if the character between x Coordinates of the first step we jump to this label in order to make the character lands on step
 	                       JMP  CHECKBEFOREEND2
 	CHECKBEFOREEND2:       MOV  BX , xCoord
-	                       CMP  BX ,190
+	                       CMP  BX ,188
 	                       JGE  SECONDCHECK2
 	                       JMP  CONTMOVING
-	SECONDCHECK2:          CMP  BX,275
+	SECONDCHECK2:          CMP  BX,268
 	                       JLE  LANDONSTEP                        	;;if the character between x Coordinates of the second step we jump to this label in order to make the character lands on step
 	                       JMP  CONTMOVING
 	;;This label is for checking if the cat at the X coordinates of the third step
 	CHECKBEFOREENDSTEP2:   MOV  BX , xCoord
-	                       CMP  BX ,80
+	                       CMP  BX ,90
 	                       JGE  SECONDCHECKSTEP2
 	                       JMP  CONTMOVING
-	SECONDCHECKSTEP2:      CMP  BX,210
+	SECONDCHECKSTEP2:      CMP  BX,205
 	                       JLE  LANDONSTEP2                       	;;if the character between x Coordinates of the above step we jump to this label in order to make the character lands on step
 	                       JMP  CONTMOVING
 ENDMOVING:
-	                       MOV  AX , GravityAccleration
-	                       sub  yCoord , AX
-	                       ret
 
+	                      mov yCoord , 115
+	                       ret
+ENDMOVINGSTEP1: mov yCoord , 79
+	                       ret
+ENDMOVINGSTEP2:  MOV yCoord , 43
+RET
 	LANDONSTEP:            call waitForNewVR
+	call delay2
 	                       call UpdatedBackground                 	;;Remove the old position
 	                       call DrawHeart
 	                       call DrawHeart2
 						   
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
-	call delay2                       	;;Draw with new onw
+	                       	;;Draw with new onw
 	                       MOV  AX , GravityAccleration
 	                       ADD  yCoord , AX
 	                       MOV  AX , yCoord
 	                       add  AX , cat_H
 	                       CMP  AX,firststepline                  	;;if they are greater or equal to the landline (ground)
-	                       Jge  ENDMOVING
+	                       Jge  ENDMOVINGSTEP1
 	                       JMP  LANDONSTEP
 
 	LANDONSTEP2:           call waitForNewVR
+	call delay2
 	                       call UpdatedBackground                 	;;Remove the old position
 	                       call DrawHeart
 						   
@@ -2007,13 +2012,13 @@ ENDMOVING:
 						   
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
-	call delay2                       	;;Draw with new onw
+	;;call delay2                       	;;Draw with new onw
 	                       MOV  AX , GravityAccleration
 	                       ADD  yCoord , AX
 	                       MOV  AX , yCoord
 	                       add  AX , cat_H
 	                       CMP  AX,secondstepline                 	;;if they are greater or equal to the landline (ground)
-	                       Jge  ENDMOVING
+	                       Jge  ENDMOVINGSTEP2
 	                       JMP  LANDONSTEP2
 	
 
@@ -2055,24 +2060,28 @@ DOG_CharacterGravity proc
 	                       JLE  D_LANDONSTEP                      	;;if the character between x Coordinates of the first step we jump to this label in order to make the character lands on step
 	                       JMP  D_CHECKBEFOREEND2
 	D_CHECKBEFOREEND2:     MOV  BX , xd
-	                       CMP  BX ,190
+	                       CMP  BX ,188
 	                       JGE  D_SECONDCHECK2
 	                       JMP  D_CONTMOVING
-	D_SECONDCHECK2:        CMP  BX,275
+	D_SECONDCHECK2:        CMP  BX,270
 	                       JLE  D_LANDONSTEP                      	;;if the character between x Coordinates of the second step we jump to this label in order to make the character lands on step
 	                       JMP  D_CONTMOVING
 	;;This label is for checking if the cat at the X coordinates of the third step
 	D_CHECKBEFOREENDSTEP2: MOV  BX , xd
-	                       CMP  BX ,80
+	                       CMP  BX ,90
 	                       JGE  D_SECONDCHECKSTEP2
 	                       JMP  D_CONTMOVING
-	D_SECONDCHECKSTEP2:    CMP  BX,210
+	D_SECONDCHECKSTEP2:    CMP  BX,205
 	                       JLE  D_LANDONSTEP2                     	;;if the character between x Coordinates of the above step we jump to this label in order to make the character lands on step
 	                       JMP  D_CONTMOVING
 D_ENDMOVING:
-	                       MOV  AX , GravityAccleration
-	                       sub  yd , AX
+
+	                      mov yd , 115
 	                       ret
+D_ENDMOVINGSTEP1: mov yd , 79
+	                       ret
+D_ENDMOVINGSTEP2:  MOV yd , 43
+RET
 
 	D_LANDONSTEP:          call waitForNewVR
 	                       call UpdatedBackground                 	;;Remove the old position
@@ -2089,7 +2098,7 @@ D_ENDMOVING:
 	                       MOV  AX , yd
 	                       add  AX , dog_H
 	                       CMP  AX,firststepline                  	;;if they are greater or equal to the landline (ground)
-	                       Jge  D_ENDMOVING
+	                       Jge  D_ENDMOVINGSTEP1
 	                       JMP  D_LANDONSTEP
 
 	D_LANDONSTEP2:         call waitForNewVR
@@ -2106,7 +2115,7 @@ D_ENDMOVING:
 	                       MOV  AX , yd
 	                       add  AX , dog_H
 	                       CMP  AX,secondstepline                 	;;if they are greater or equal to the landline (ground)
-	                       Jge  D_ENDMOVING
+	                       Jge  D_ENDMOVINGSTEP2
 	                       JMP  D_LANDONSTEP2
 	
 
@@ -2614,6 +2623,7 @@ CatHitDog proc
 	; re draw all screen componenets including the fish
 	                       call waitForNewVR
 	;call delay2
+							
 	                       call UpdatedBackground
 						   
 	                       call DrawHeart
@@ -2623,8 +2633,9 @@ CatHitDog proc
 	                       call DrawDog
 	                       call DrawCat
 	                       
-	                       call CharacterGravity
+	                      call CharacterGravity
                            call DrawFish
+						    
 	                       call read_the_key
 	                       pop  bx
 	                       pop  dx
@@ -2713,13 +2724,16 @@ read_the_key proc
 
 	ReadKey:               
 	                       call waitForNewVR
-	                       call UpdatedBackground
-                           call DrawHeart
-	                       call DrawHeart2
-	                       call DrawCat
-	                       call DrawDog
+	                       
 	                       call CharacterGravity
                            call DOG_CharacterGravity
+						   call UpdatedBackground
+						   call DrawHeart
+	                       call DrawHeart2
+	                       
+						   call DrawCat
+	                       call DrawDog
+						   CALL delay2
 	;call delay
 	                       jmp  CHECK
 	;;;;;;;;;;;;;;;;;;;;;;;;;;; CAT MOVEMENT LABLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;
