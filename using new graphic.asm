@@ -6,6 +6,9 @@
 	cat_H                     equ 25
 	heart_W                   equ 15
 	heart_H                   equ 15
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;SCORE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    cat_score                 DW 0
+    dog_score                 DW 0
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PowerUps;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	PowerUpsYpos              DW  100, 64                                                                                                                                                                                         	;100 for step 1, 2 ; 64 for step 3
 	steps_to_draw_powerUps    DW  3, 1, 2, 3                                                                                                                                                                                      	;if 0 then nothing will be drawn
@@ -23,6 +26,18 @@
 	draw_PowerUp              DB  1
 	draw_PowerUp2             DB  1
 	RandomNums                DW  0, 0
+	Cat_Took_PowerUp		  DB 0
+	Cat_Took_HeartUp		  DB 0
+	Cat_Took_HeartDown		  DB 0
+	Cat_Took_Dub_Power		  DB 0
+	Cat_Took_Coin			  DB 0
+	Cat_Took_Shield			  DB 0
+    Dog_Took_PowerUp		  DB 0
+	Dog_Took_HeartUp		  DB 0
+	Dog_Took_HeartDown		  DB 0
+	Dog_Took_Dub_Power		  DB 0
+	Dog_Took_Coin			  DB 0
+	Dog_Took_Shield			  DB 0
 	;############################################ADDDDEEEDDDD##########################################;
 	ChesonPowerUp             DW  ?
 	ChesonPowerUp2            DW  ?
@@ -71,20 +86,21 @@
 	                          DB  43, 43, 140, 226, 23, 16, 16, 16, 16, 200, 137, 42, 43, 43, 43, 43, 43, 139, 201, 16, 16, 16, 16, 20, 229, 140, 43, 43, 43, 43, 43, 43, 227, 22, 16, 16, 16, 16, 200, 138
 	                          DB  43, 43, 43, 43, 43, 43, 43, 200, 16, 16, 16, 16, 16, 200, 234, 235, 235, 235, 235, 235, 235, 236, 200, 16, 16
     
-	Shield                    DB  16, 16, 16, 16, 16, 22, 19, 17, 18, 23, 16, 16, 16, 16, 16, 16, 16, 16, 16, 19, 20, 23, 25, 24, 224, 18, 16, 16, 16, 16, 16, 16, 16, 19, 21, 25, 24, 22, 22, 24
-	                          DB  22, 224, 16, 16, 16, 16, 16, 19, 20, 25, 24, 20, 20, 20, 22, 29, 22, 18, 16, 16, 16, 19, 19, 23, 24, 21, 24, 24, 28, 22, 24, 28, 22, 18, 16, 25, 18, 23, 23, 20
-	                          DB  24, 25, 24, 30, 28, 22, 24, 29, 21, 19, 18, 23, 23, 21, 27, 25, 25, 24, 30, 0, 28, 21, 25, 29, 20, 17, 24, 23, 21, 28, 25, 25, 24, 30, 0, 29, 21, 24, 0, 20
-	                          DB  17, 24, 23, 21, 28, 25, 25, 24, 30, 0, 29, 21, 24, 0, 20, 17, 24, 23, 21, 28, 25, 25, 24, 30, 0, 29, 21, 24, 0, 20, 17, 24, 23, 21, 28, 25, 25, 24, 30, 0
-	                          DB  29, 21, 24, 0, 20, 17, 24, 23, 21, 28, 25, 25, 24, 27, 28, 27, 21, 24, 0, 20, 17, 24, 23, 18, 20, 19, 19, 19, 19, 19, 19, 18, 24, 0, 20, 224, 19, 24, 23, 23
-	                          DB  23, 23, 23, 27, 27, 27, 27, 29, 24, 20, 26, 20, 17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 19, 23
+	Shield                  DB 16, 16, 16, 18, 21, 21, 21, 21, 21, 21, 19, 18, 16, 16, 16, 16, 16, 16, 19, 23, 22, 162, 163, 139, 164, 21, 232, 16, 16, 16, 16, 16, 18, 21, 22, 25, 66, 66, 43, 140 
+                            DB 23, 20, 18, 16, 16, 16, 16, 20, 23, 22, 66, 66, 66, 43, 42, 163, 22, 19, 16, 16, 16, 18, 23, 22, 27, 66, 66, 66, 43, 43, 42, 163, 21, 18, 16, 18, 21, 22, 24, 66 
+                            DB 66, 66, 66, 43, 43, 43, 140, 23, 19, 16, 18, 24, 162, 66, 66, 66, 66, 66, 43, 43, 43, 42, 161, 22, 18, 224, 25, 162, 66, 66, 66, 66, 66, 43, 43, 43, 43, 137, 23, 18 
+                            DB 224, 25, 162, 66, 66, 66, 66, 66, 43, 43, 43, 43, 137, 23, 18, 224, 25, 162, 66, 66, 66, 66, 66, 43, 43, 43, 43, 137, 23, 18, 224, 25, 162, 66, 66, 66, 66, 66, 43, 43 
+                            DB 43, 43, 137, 23, 18, 18, 25, 162, 66, 66, 66, 66, 66, 43, 43, 43, 43, 137, 23, 18, 21, 24, 20, 24, 24, 24, 24, 24, 24, 140, 140, 140, 236, 23, 19, 23, 23, 22, 23, 20 
+                            DB 23, 21, 22, 20, 23, 21, 21, 22, 23, 20, 207, 22, 18, 18, 18, 18, 20, 23, 19, 18, 18, 18, 19, 22, 18
 
+	SpeedUp                 DB 16, 16, 6, 6, 6, 43, 43, 43, 43, 43, 43, 14, 16, 16, 16, 16, 6, 6, 43, 43, 43, 43, 43, 43, 43, 43, 14, 14, 14, 16, 6, 6, 43, 43, 43, 42, 42, 42, 42, 43 
+                            DB 43, 43, 14, 14, 14, 6, 6, 43, 43, 43, 42, 42, 42, 42, 43, 43, 43, 43, 14, 14, 6, 43, 43, 43, 6, 43, 43, 43, 43, 43, 14, 43, 43, 14, 14, 6, 43, 43, 43, 6 
+                            DB 43, 43, 43, 43, 43, 14, 43, 43, 14, 14, 6, 43, 43, 43, 6, 43, 43, 43, 43, 43, 14, 43, 43, 14, 14, 6, 43, 43, 43, 6, 43, 43, 43, 43, 43, 14, 43, 43, 14, 14 
+                            DB 6, 43, 43, 43, 6, 43, 43, 43, 43, 43, 14, 43, 43, 14, 14, 6, 43, 43, 43, 6, 43, 43, 43, 43, 43, 14, 43, 43, 14, 14, 6, 43, 43, 43, 6, 43, 43, 43, 43, 43 
+                            DB 14, 43, 43, 14, 14, 6, 6, 43, 43, 43, 14, 14, 14, 14, 43, 43, 43, 43, 14, 14, 6, 6, 6, 43, 43, 43, 43, 43, 43, 43, 43, 43, 14, 14, 14, 16, 6, 6, 6, 43 
+                            DB 43, 43, 43, 43, 43, 43, 14, 14, 14, 16, 16, 16, 6, 6, 6, 43, 14, 14, 14, 14, 14, 14, 14, 16, 16
+                            ​
 
-	SpeedUp                   DB  16, 0, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 0, 16, 16, 0, 28, 18, 233, 233, 233, 233, 233, 233, 233, 18, 28, 0, 16, 16, 0, 28, 236, 43, 43, 43, 43, 43, 43
-	                          DB  43, 236, 28, 0, 16, 16, 0, 28, 236, 43, 43, 43, 43, 43, 43, 43, 236, 28, 0, 16, 16, 0, 28, 236, 43, 43, 43, 43, 43, 43, 43, 236, 28, 0, 16, 0, 0, 28, 236, 43
-	                          DB  43, 43, 43, 43, 43, 43, 236, 28, 0, 0, 30, 25, 24, 235, 43, 43, 43, 43, 43, 43, 43, 235, 24, 25, 30, 30, 19, 164, 140, 43, 43, 43, 43, 43, 43, 43, 140, 164, 19, 30
-	                          DB  30, 25, 24, 14, 43, 43, 43, 43, 43, 43, 43, 14, 24, 25, 30, 0, 29, 25, 24, 14, 43, 43, 43, 43, 43, 14, 24, 25, 29, 0, 16, 0, 29, 25, 164, 67, 43, 43, 43, 67
-	                          DB  164, 25, 29, 0, 16, 16, 16, 0, 29, 25, 24, 14, 43, 14, 24, 25, 29, 0, 16, 16, 16, 16, 16, 0, 29, 25, 24, 67, 24, 25, 29, 0, 16, 16, 16, 16, 16, 16, 16, 0
-	                          DB  29, 25, 19, 25, 29, 0, 16, 16, 16, 16, 16, 16, 16, 16, 16, 0, 30, 30, 30, 0, 16, 16, 16, 16, 16
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;; fish variables ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	fish_W                    equ 20                                                                                                                                                                                              	; fish width
@@ -1346,7 +1362,7 @@
 	                          DB  31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31
 	                          DB  31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31
 	                          DB  31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31
- DB 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31 
+ 							  DB 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31 
 ;---------------------------------------END OF MAIN MENU DATA ----------------------------------------
 .CODE
 MAIN PROC FAR
@@ -1492,7 +1508,7 @@ SHOWNAMES PROC
 	                       INT  21H
 	;;DELAY THE SCREEN TO SHOW THE NAMES
 	                       mov  di,00FFFH
-	LOP12:                 MOV  CX,7500
+	LOP12:                 MOV  CX,20000
 	LOP22:                 LOOP LOP22
 	                       DEC  DI
 	                       JNZ  LOP12
@@ -1538,7 +1554,9 @@ OPTIONSMENU PROC
 	                       CMP  AH , 60
 	                       JZ   STARTGAME
 	                       JMP  CHECKS
-	ESCAPE:                CALL MAINMENU
+	ESCAPE:                mov ah, 4ch
+                          
+                           CALL MAINMENU
 	                       CALL STARTINGSCREEN
 	                       RET
 	STARTCHAT:             
@@ -1554,6 +1572,7 @@ OPTIONSMENU PROC
 	STARTGAME:             mov  dh, 20
 	                       mov  dl, 0
 	                       mov  ah, 2
+                           
 	                       int  10h
 	                       MOV  DX, OFFSET MSG14
 	                       MOV  AH,9
@@ -1568,6 +1587,7 @@ OPTIONSMENU PROC
 
 OPTIONSMENU ENDP
 ;----------------------------------------GAME PROCEDURES----------------------------------------------
+
 STARTTHEGAME PROC
 	                       mov  ah,0
 	                       mov  al,13h
@@ -1576,8 +1596,9 @@ STARTTHEGAME PROC
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	                       call waitForNewVR
+                           
 	                       call DrawBackGround
-
+                           
 	; Drawing health bars
 	                       mov  HealthBarPos, 'F'                 	; stands for first player's health bar
 	                       call Draw_Health_Bar
@@ -1587,16 +1608,19 @@ STARTTHEGAME PROC
 	                       call Draw_Health_Bar
 	                       inc  HealthBarDrawn                    	; to indicate that it has been drawn once
 						
-	                       mov  CurrentPowerUp, 0
+	                       
+	                       call DrawCatLogo
+	                       call DrawDogLogo
+						   mov  CurrentPowerUp, 0
 	                       call GenerateRandomNumber
 	                       call GenerateRandomPowerUp
 	                       call DrawHeart
+						   
 	                       mov  CurrentPowerUp, 1
 	                       call GenerateRandomNumber
 	                       call GenerateRandomPowerUp2
 	                       call DrawHeart2
-	                       call DrawCatLogo
-	                       call DrawDogLogo
+						
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	CatDrawing:            
 	                       mov  BX , 0
@@ -1606,7 +1630,7 @@ STARTTHEGAME PROC
 	                    
 
 	DogDrawing:            
-	                       mov  BX , 200
+	                       mov  BX , 290
 	                       mov  DX  ,115
 	                       mov  xd, BX
 	                       mov  yd , DX
@@ -1874,6 +1898,7 @@ CharacterGravity proc
 	                       call UpdatedBackground
 	                       call DrawHeart
 	                       call DrawHeart2
+						   
 	                       call DrawCat
 	                       call DrawDog
 	;call delay2
@@ -1911,6 +1936,7 @@ ENDMOVING:
 	                       call UpdatedBackground                 	;;Remove the old position
 	                       call DrawHeart
 	                       call DrawHeart2
+						   
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
 	;call delay2                       	;;Draw with new onw
@@ -1925,7 +1951,9 @@ ENDMOVING:
 	LANDONSTEP2:           call waitForNewVR
 	                       call UpdatedBackground                 	;;Remove the old position
 	                       call DrawHeart
+						   
 	                       call DrawHeart2
+						   
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
 	;call delay2                       	;;Draw with new onw
@@ -1959,7 +1987,9 @@ DOG_CharacterGravity proc
 	                       call waitForNewVR
 	                       call UpdatedBackground
 	                       call DrawHeart
+						   
 	                       call DrawHeart2
+						   
 	                       call DrawCat
 	                       call DrawDog
 	;call delay2
@@ -1996,9 +2026,12 @@ D_ENDMOVING:
 	D_LANDONSTEP:          call waitForNewVR
 	                       call UpdatedBackground                 	;;Remove the old position
 	                       call DrawHeart
+						   
 	                       call DrawHeart2
+						   
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
+						   
 	;call delay2                       	;;Draw with new onw
 	                       MOV  AX , GravityAccleration
 	                       ADD  yd , AX
@@ -2011,7 +2044,9 @@ D_ENDMOVING:
 	D_LANDONSTEP2:         call waitForNewVR
 	                       call UpdatedBackground                 	;;Remove the old position
 	                       call DrawHeart
+						   
 	                       call DrawHeart2
+						   
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
 	;call delay2                       	;;Draw with new onw
@@ -2047,7 +2082,7 @@ Draw_Health_Bar PROC
  decHealth1:
                 mov cx, Player1_Health_cx   ;store in cx the current location of the player's health bar
                 mov dx,10
-                mov al,04 ;Pixel color
+                mov al,04  ;Pixel color
                 mov ah,0ch ;Draw Pixel Command
                 decP1: int 10h
                 inc dx
@@ -2085,7 +2120,7 @@ SecondPlayerTest:
                  
                 mov cx, Player2_Health_cx
                 mov dx,10
-                mov al,04       
+                mov al,04      
                 mov ah,0ch 
                 decP2: int 10h
                 inc dx
@@ -2121,7 +2156,7 @@ CheckIncHealthP1:
 IncHealth1:
                 mov cx, Player1_Health_cx
                 mov dx,10
-                mov al,02h ;Pixel color
+                mov al,0Ah ;Pixel color
                 mov ah,0ch ;Draw Pixel Command
                 incP1: int 10h
                 inc dx
@@ -2150,7 +2185,7 @@ CheckIncHealthP2:
 IncHealth2:
                 mov cx, Player2_Health_cx
                 mov dx,10
-                mov al,02h ;Pixel color
+                mov al,0Ah ;Pixel color
                 mov ah,0ch ;Draw Pixel Command
                 incP2: int 10h
                 inc dx
@@ -2178,7 +2213,7 @@ ReFinish: jmp FinishHealthBar
 ;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Draw health bar once
 ; ---------------------------------- Backcolor of health bar------------------------------
 DrawFirst:
-                mov al,0h ; backcolor of the bar 
+                mov al,0Fh ; backcolor of the bar 
                 mov ah,0ch   
 
                 ; position of 1st player's health bar 
@@ -2211,7 +2246,7 @@ DrawFirst:
                 JNE BarBackDrawing
 
 ;-------------------------------- Filling the bar with greencolor ------------------------------
-                mov al,02h  ; defult green color for the filling of the bar
+                mov al,0Ah  ; defult green color for the filling of the bar
                 mov ah,0ch   
 
                 ; position of 1st player's health bar 
@@ -2426,7 +2461,9 @@ DogHitCat proc
 	;call delay2
 	                       call UpdatedBackground
 	                       call DrawHeart
+						   
 	                       call DrawHeart2
+						   
 	                       call DrawDog                           	; at new postion
 	                       call DrawCat
 	                       call DrawBall
@@ -2446,6 +2483,7 @@ DogHitCat proc
 
 	finish2:               
 	                       mov  start_balling ,0
+                           mov Cat_Took_Shield, 0
 	                       ret
 
 	check_Xright_cat:      
@@ -2466,9 +2504,16 @@ DogHitCat proc
 	                       jmp  continue_draw2
 
 	;;;;;;;;;;;;;;;;; hit effect decrease health of the dog  ;;;;;;;;;;;;;;;;
-	decHealthCatDone:      
+	decHealthCatDone:      CMP Cat_Took_Shield,1
+                           je finish2
+                           
 	                       mov  Player1_DecHealth,1               	;dec health of dog
 	                       call Draw_Health_Bar
+                           cmp Dog_Took_Dub_Power, 1
+                           jnz finish2
+                           mov  Player1_DecHealth,1               	;dec health of dog again
+	                       call Draw_Health_Bar
+                           mov Dog_Took_Dub_Power, 0
 	                       jmp  finish2
 
 DogHitCat endp
@@ -2516,12 +2561,16 @@ CatHitDog proc
 	                       call waitForNewVR
 	;call delay2
 	                       call UpdatedBackground
+						   
 	                       call DrawHeart
+						   
 	                       call DrawHeart2
+						   
 	                       call DrawDog
 	                       call DrawCat
-	                       call DrawFish
+	                       
 	                       call CharacterGravity
+                           call DrawFish
 	                       call read_the_key
 	                       pop  bx
 	                       pop  dx
@@ -2538,6 +2587,7 @@ CatHitDog proc
 
 	finish:                
 	                       mov  start_hitting ,0
+                           mov Dog_Took_Shield, 0
 	                       ret
 
 	check_Xright:          
@@ -2560,11 +2610,17 @@ CatHitDog proc
 	                       jmp  continue_draw
 
 	;;;;;;;;;;;;;;;;; hit effect decrease health of the dog  ;;;;;;;;;;;;;;;;
-	decHealthDogDone:      
+	decHealthDogDone:      cmp Dog_Took_Shield, 1
+                           je finish
 	                       mov  Player2_DecHealth,1               	;dec health of dog
 	                       call Draw_Health_Bar
+                           cmp Cat_Took_Dub_Power, 1
+                           jnz finish
+                           mov  Player2_DecHealth,1   
+                           call Draw_Health_Bar
+                           mov Cat_Took_Dub_Power, 0
 	                       jmp  finish
-
+               
 CatHitDog endp
 ;-------------------------------READING KEYS FROM PLAYERS-----------------------------------
 read_the_key proc
@@ -2604,12 +2660,12 @@ read_the_key proc
 	ReadKey:               
 	                       call waitForNewVR
 	                       call UpdatedBackground
-	                       call DrawHeart
+                           call DrawHeart
 	                       call DrawHeart2
 	                       call DrawCat
 	                       call DrawDog
-						   call CharacterGravity
-	                       call DOG_CharacterGravity
+	                       call CharacterGravity
+                           call DOG_CharacterGravity
 	;call delay
 	                       jmp  CHECK
 	;;;;;;;;;;;;;;;;;;;;;;;;;;; CAT MOVEMENT LABLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2687,25 +2743,100 @@ read_the_key endp
 ;-------------------------------POWER UPS PROCEDURES-----------------------------------
 DrawHeart proc
 
+                       push ax
+	CheckYpos1Cat:        mov  ax,yCoord
+	                       cmp  heart_powerupY, ax
+	                       jl   CheckYpos1Dog
+	CheckYpos2Cat:        add  ax,cat_H
+	                       cmp  heart_powerupY, ax
+	                       jg   CheckYpos1Dog
+	CheckXpos1Cat:        mov  ax,xCoord
+	                       cmp  heart_powerupX, ax
+	                       jl   CheckYpos1Dog
+	CheckXpos2Cat:        add  ax,cat_W
+	                       cmp  heart_powerupX, ax
+	                       jg   CheckYpos1Dog
+						   mov Cat_Took_PowerUp, 1
+						   jmp Cattook
+	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;                    
+	CheckYpos1Dog:        mov  ax,yd
+	                       cmp  heart_powerupY, ax
+	                       jl   DidnotTakeMiddle
+	CheckYpos2Dog:        add  ax,cat_H
+	                       cmp  heart_powerupY, ax
+	                       jg   DidnotTakeMiddle
+	CheckXpos1Dog:        mov  ax,xd
+	                       cmp  heart_powerupX, ax
+	                       jl   DidnotTakeMiddle
+	CheckXpos2Dog:        add  ax,cat_W
+	                       cmp  heart_powerupX, ax
+	                       jg   DidnotTakeMiddle
+                           jmp Dogtook
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	Cattook:    cmp ChesonPowerUp, 0
+				je catTook_HeartDown
+				cmp ChesonPowerUp, 1
+				je catTook_HeartUP
+                cmp ChesonPowerUp, 2
+				je catTook_DubPower
+                cmp ChesonPowerUp, 3
+				je catTook_Shield
+                jmp Anywaycat
+				
+				catTook_HeartDown:							
+							mov Player1_DecHealth, 1
+						   	call Draw_Health_Bar		
+							jmp Anywaycat   
+				catTook_HeartUP:
+							mov Player1_IncHealth, 1
+						   	call Draw_Health_Bar
+							jmp Anywaycat
+                catTook_Shield:
+							mov Cat_Took_Shield, 1
+							jmp Anywaycat
+                catTook_DubPower:
+                            mov Cat_Took_Dub_Power, 1
+                            jmp Anywaycat
 
-	                       push ax
-						
-	CheckYpos1:            mov  ax,yCoord
-	                       cmp  heart_powerupY, ax
-	                       jl   DidnotTake
-	CheckYpos2:            add  ax,cat_H
-	                       cmp  heart_powerupY, ax
-	                       jg   DidnotTake
-	CheckXpos1:            mov  ax,xCoord
-	                       cmp  heart_powerupX, ax
-	                       jl   DidnotTake
-	CheckXpos2:            add  ax,cat_W
-	                       cmp  heart_powerupX, ax
-	                       jg   DidnotTake
-	took:                  
-	                       mov  CurrentPowerUp, 0
+				Anywaycat:
+						   mov  CurrentPowerUp, 0
 	                       call GenerateRandomNumber
 	                       call GenerateRandomPowerUp
+                           jmp DidnotTake
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    DidnotTakeMiddle: jmp DidnotTake
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    Dogtook:    cmp ChesonPowerUp, 0
+				je dogTook_HeartDown
+				cmp ChesonPowerUp, 1
+				je dogTook_HeartUP
+                cmp ChesonPowerUp, 2
+				je dogTook_DubPower
+                cmp ChesonPowerUp, 3
+				je dogTook_Shield
+                jmp Anywaydog
+				
+				dogTook_HeartDown:							
+							mov Player2_DecHealth, 1
+						   	call Draw_Health_Bar		
+							jmp Anywaydog   
+				dogTook_HeartUP:
+							mov Player2_IncHealth, 1
+						   	call Draw_Health_Bar
+							jmp Anywaydog
+                dogTook_Shield:
+							mov Dog_Took_Shield, 1
+							jmp Anywaydog
+                dogTook_DubPower:
+                            mov Dog_Took_Dub_Power, 1
+                            jmp Anywaydog
+
+				Anywaydog:
+						   mov  CurrentPowerUp, 0
+	                       call GenerateRandomNumber
+	                       call GenerateRandomPowerUp
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	DidnotTake:            
 	                       cmp  draw_PowerUp, 0
 	                       jz   ENDINGHeart
@@ -2723,6 +2854,7 @@ DrawHeart proc
 	                       jz   shieldDraw
 	                       CMP  ChesonPowerUp, 4
 	                       jz   SpeedUpDraw
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	RedHeart:              mov  DI, offset heart_img
 	                       jmp  STARTDRAWING
 
@@ -2770,22 +2902,102 @@ DrawHeart2 proc
 
 
 	                       push ax
-	CheckYpos12:           mov  ax,yCoord
+	CheckYpos12Cat:        mov  ax,yCoord
 	                       cmp  heart_powerupY2, ax
-	                       jl   DidnotTake2
-	CheckYpos22:           add  ax,cat_H
+	                       jl   CheckYpos12Dog
+	CheckYpos22Cat:        add  ax,cat_H
 	                       cmp  heart_powerupY2, ax
-	                       jg   DidnotTake2
-	CheckXpos12:           mov  ax,xCoord
+	                       jg   CheckYpos12Dog
+	CheckXpos12Cat:        mov  ax,xCoord
 	                       cmp  heart_powerupX2, ax
-	                       jl   DidnotTake2
-	CheckXpos22:           add  ax,cat_W
+	                       jl   CheckYpos12Dog
+	CheckXpos22Cat:        add  ax,cat_W
 	                       cmp  heart_powerupX2, ax
-	                       jg   DidnotTake2
-	took2:                 
-	                       mov  CurrentPowerUp, 1
+	                       jg   CheckYpos12Dog
+						   mov Cat_Took_PowerUp, 1
+						   jmp Cattook2
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	CheckYpos12Dog:        mov  ax,yd
+	                       cmp  heart_powerupY2, ax
+	                       jl   DidnotTakeMiddle2
+	CheckYpos22Dog:        add  ax,dog_H
+	                       cmp  heart_powerupY2, ax
+	                       jg   DidnotTakeMiddle2
+	CheckXpos12Dog:        mov  ax,xd
+	                       cmp  heart_powerupX2, ax
+	                       jl   DidnotTakeMiddle2
+	CheckXpos22Dog:        add  ax,dog_W
+	                       cmp  heart_powerupX2, ax
+	                       jg   DidnotTakeMiddle2
+                           jmp Dogtook2
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	Cattook2:   cmp ChesonPowerUp2, 0
+				je catTook_HeartDown2
+				cmp ChesonPowerUp2, 1
+				je catTook_HeartUP2
+                cmp ChesonPowerUp2, 2
+				je catTook_DubPower2
+                cmp ChesonPowerUp2, 3
+				je catTook_Shield2
+                jmp Anyway2
+				
+				catTook_HeartDown2:							
+							mov Player1_DecHealth, 1
+						   	call Draw_Health_Bar		
+							jmp Anyway2   
+				catTook_HeartUP2:
+							mov Player1_IncHealth, 1
+						   	call Draw_Health_Bar
+							jmp Anyway2
+                catTook_Shield2:
+							mov Cat_Took_Shield, 1
+							jmp Anyway2
+                catTook_DubPower2:
+                            mov Cat_Took_Dub_Power, 1
+                            jmp Anyway2
+
+
+				Anyway2:
+						   mov  CurrentPowerUp, 1
 	                       call GenerateRandomNumber
 	                       call GenerateRandomPowerUp2
+                           jmp DidnotTake2
+    
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    DidnotTakeMiddle2: jmp DidnotTake2
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    
+    Dogtook2:    cmp ChesonPowerUp2, 0
+				je dogTook_HeartDown2
+				cmp ChesonPowerUp2, 1
+				je dogTook_HeartUP2
+                cmp ChesonPowerUp2, 2
+				je dogTook_DubPower2
+                cmp ChesonPowerUp2, 3
+				je dogTook_Shield2
+                jmp Anywaydog2
+				
+				dogTook_HeartDown2:							
+							mov Player2_DecHealth, 1
+						   	call Draw_Health_Bar		
+							jmp Anywaydog2   
+				dogTook_HeartUP2:
+							mov Player2_IncHealth, 1
+						   	call Draw_Health_Bar
+							jmp Anywaydog2
+                dogTook_Shield2:
+							mov Dog_Took_Shield, 1
+							jmp Anywaydog2
+                dogTook_DubPower2:
+                            mov Dog_Took_Dub_Power, 1
+                            jmp Anywaydog2
+
+				Anywaydog2:
+						   mov  CurrentPowerUp, 1
+	                       call GenerateRandomNumber
+	                       call GenerateRandomPowerUp2
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	DidnotTake2:           
 	                       cmp  draw_PowerUp2, 0
 	                       jz   ENDINGHeart2
