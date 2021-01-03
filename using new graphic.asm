@@ -189,7 +189,7 @@
 	LandLine                  dw  142d
 	firststepline             dw  105d
 	secondstepline            dw  69d
-	GravityAccleration        dw  10d
+	GravityAccleration        dw  8d
 	isFalling                 dw  0
 	;detect if the player is falling or not
 	; health bar drawing
@@ -1901,7 +1901,7 @@ delay Endp
 ;;This one is used For gravity because it is much less than the above delay
 delay2 proc
 	                       mov  di,00FFAH
-	LOP12D:                MOV  CX,95
+	LOP12D:                MOV  CX,75
 	LOP22D:                LOOP LOP22D
 	                       DEC  DI
 	                       JNZ  LOP12D
@@ -2633,10 +2633,10 @@ CatHitDog proc
 						   
 	                       call DrawDog
 	                       call DrawCat
-	                       
+	                        call DrawFish
 	                      call CharacterGravity
-                           call DrawFish
-						    
+                          
+						   
 	                       call read_the_key
 	                       pop  bx
 	                       pop  dx
