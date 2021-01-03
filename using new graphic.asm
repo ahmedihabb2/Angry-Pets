@@ -149,7 +149,7 @@
 	catlo_H                   equ 15
 	xcatlo                    dw  2
 	ycatlo                    dw  8
-​ logo_cat_img DB 16, 16, 16, 16, 32, 32, 55, 55, 55, 32, 32, 30, 32, 32, 16, 16, 16, 16, 16, 55, 53, 52, 52, 52, 53, 55, 32, 53, 54, 32, 16, 16, 176, 55, 53, 54, 54, 52, 52, 52
+​    logo_cat_img              DB 16, 16, 16, 16, 32, 32, 55, 55, 55, 32, 32, 30, 32, 32, 16, 16, 16, 16, 16, 55, 53, 52, 52, 52, 53, 55, 32, 53, 54, 32, 16, 16, 176, 55, 53, 54, 54, 52, 52, 52
 	                          DB  53, 53, 52, 54, 32, 16, 16, 176, 55, 53, 54, 53, 52, 52, 52, 52, 53, 53, 54, 32, 16, 16, 29, 224, 9, 53, 52, 52, 52, 53, 9, 127, 53, 54, 32, 16, 16, 16, 25, 27
 	                          DB  56, 54, 54, 54, 56, 28, 25, 1, 32, 16, 16, 17, 18, 27, 20, 23, 27, 27, 27, 23, 21, 27, 18, 17, 16, 16, 16, 24, 23, 148, 151, 28, 28, 28, 220, 24, 24, 23, 16, 16
 	                          DB  16, 16, 24, 27, 21, 24, 28, 28, 28, 23, 21, 27, 23, 16, 16, 16, 18, 25, 28, 28, 28, 28, 28, 28, 28, 28, 28, 24, 18, 16, 16, 21, 23, 28, 28, 28, 28, 28, 28, 28
@@ -160,7 +160,7 @@
 	doglo_H                   equ 15
 	xdoglo                    dw  301
 	ydoglo                    dw  8
-​ logo_dog_img DB 16, 224, 19, 30, 16, 16, 18, 18, 25, 30, 22, 16, 16, 16, 16, 18, 25, 26, 232, 18, 18, 26, 26, 28, 29, 22, 16, 16, 16, 16, 18, 28, 30, 28, 26, 26, 137, 137, 24, 30
+​    logo_dog_img              DB 16, 224, 19, 30, 16, 16, 18, 18, 25, 30, 22, 16, 16, 16, 16, 18, 25, 26, 232, 18, 18, 26, 26, 28, 29, 22, 16, 16, 16, 16, 18, 28, 30, 28, 26, 26, 137, 137, 24, 30
 	                          DB  29, 20, 28, 16, 16, 18, 24, 29, 20, 162, 235, 163, 65, 164, 25, 30, 23, 28, 16, 16, 18, 28, 28, 138, 164, 18, 18, 164, 65, 234, 19, 19, 16, 16, 16, 18, 23, 24, 138, 24
 	                          DB  235, 235, 24, 163, 138, 20, 19, 18, 16, 16, 16, 23, 229, 24, 233, 138, 65, 164, 18, 18, 163, 162, 164, 234, 16, 16, 18, 18, 162, 18, 18, 65, 164, 23, 23, 163, 162, 65, 163, 18
 	                          DB  18, 138, 138, 162, 27, 21, 65, 24, 25, 19, 164, 162, 65, 24, 233, 236, 24, 164, 139, 23, 236, 65, 65, 164, 164, 24, 139, 65, 65, 139, 161, 65, 65, 138, 164, 24, 65, 65, 65, 65
@@ -200,7 +200,15 @@
 	countHB1                  dw  0                                                                                                                                                                                               	;for only doubling the decreasing value of health of player 1
 	countHB2                  dw  0                                                                                                                                                                                               	;for only doubling the decreasing value of health of player 2
 	countINC1                 dw  0                                                                                                                                                                                               	;for only doubling the increasing value of health of player 1
-	countINC2                 dw  0                                                                                                                                                                                               	;for only doubling the increasing value of health of player 1
+	countINC2                 dw  0     
+	
+	;-----------------------------------GAME OVER ---------------------------------------------------------
+	THE_WINNER                         db         'THE WINNER IS ','$'
+	GAME_OVER_STR                      db         'GAME OVER ...','$'
+	ANGRY_PETS                         db         '<<<<<<< ANGRY PETS >>>>>>>','$'
+	FINALMSG_MENU                      db         'Press 1 to return to the main menu','$'                        
+	FINALMSG_ESC                       db         'Press ESC to end the game','$'                        
+                                                                                                                                                                                          	;for only doubling the increasing value of health of player 1
 
 	;----------------------------------- MAIN MENU ----------------------------------------------------------------
 	MSG1                      DB  '*        ANGRY PETS        *',10,13,'$'
@@ -209,10 +217,10 @@
 	MSG4                      DB  'NAME: ', '$'
 	MSG5                      DB  'Press Enter To Continue',10,13,'$'
 	MSG6                      DB  'Note :The username should not exceed 15 characters and start with a letter',10,13,'$'
-	FIRST_PLAYER_NAME         DB  15,?,15 dup('$')
+	FIRST_PLAYER_NAME         DB  15,?,15 dup(?),'$'
 	ISFIRSTPLAYER             DB  1
 	MSG7                      DB  'Please Enter Second Player Name',10,13,'$'
-	SECOND_PLAYER_NAME        DB  15,?,15 dup('$')
+	SECOND_PLAYER_NAME        DB   15,?,15 dup(?),'$'
 	MSG8                      DB  'FIRST PLAYER: ','$'
 	MSG9                      DB  'SECOND PLAYER: ','$'
 	MSG13                     DB  'This option is currently not available','$'
@@ -1716,7 +1724,7 @@ DrawBackGround Endp
 
 UpdatedBackground proc
 	                       MOV  CX,0
-	                       MOV  DX ,20
+	                       MOV  DX ,24
 	                       MOV  AL,0Bh
 	                       MOV  AH,0Ch
 	FILLUpdatedBG:         INT  10h
@@ -2022,225 +2030,229 @@ DOG_CharacterGravity Endp
 
 ;-------------------------------DRAWING HEALTH BAR PROCEDURE-----------------------------------
 
+Draw_Health_Bar PROC 
 
-Draw_Health_Bar PROC
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Decrease health
+;------------------- check whether the 1st player has been hit?
+                 cmp Player1_DecHealth,0 ; no hits
+                 je SecondPlayerTest   
 
-	;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Decrease health
-	;------------------- check whether the 1st player has been hit?
-	                       cmp  Player1_DecHealth,0               	; no hits
-	                       je   SecondPlayerTest
-
-	;------------------- check whether the 1st player is the loser?
-	                       sub  Player1_Health_cx,1
-	                       cmp  Player1_Health_cx, 21
-	                       ja   decHealth1
-	                       jmp  FinishHealthBar
+;------------------- check whether the 1st player is the loser?
+                sub Player1_Health_cx,1
+                cmp Player1_Health_cx, 23   ; check for the current position if it reaches the end then this is the loser
+                ja decHealth1              
+                call GAME_OVER     
   
                 
-	decHealth1:            
-	                       mov  cx, Player1_Health_cx
-	                       mov  dx,10
-	                       mov  al,04                             	;Pixel color
-	                       mov  ah,0ch                            	;Draw Pixel Command
-	decP1:                 int  10h
-	                       inc  dx
-	                       cmp  dx,19
-	                       jnz  decP1
-	                       Inc  countHB1                          	;for only doubling the value to decrease
-	                       cmp  countHB1,2
-	                       jb   doubleHB1
-	                       jmp  countinueHB
+ decHealth1:
+                mov cx, Player1_Health_cx   ;store in cx the current location of the player's health bar
+                mov dx,10
+                mov al,04 ;Pixel color
+                mov ah,0ch ;Draw Pixel Command
+                decP1: int 10h
+                inc dx
+                cmp dx,19
+                jnz decP1
+                Inc countHB1    ;for only doubling the value to decrease 
+                cmp countHB1,2   
+                jb doubleHB1
+                jmp countinueHB
                 
-	doubleHB1:             dec  Player1_Health_cx
-	                       jmp  decHealth1
-	countinueHB:           
-	                       mov  countHB1,0
+                doubleHB1: dec Player1_Health_cx   
+                jmp decHealth1
+                countinueHB:
+                mov countHB1,0   ; return it to zero for the other calls
                
-	;------------------- check again whether the 1st player is the loser now?
-	                       cmp  Player1_Health_cx, 21
-	                       ja   SecondPlayerTest
-	                       ret
+;------------------- check again whether the 1st player is the loser now?
+                cmp Player1_Health_cx, 23
+                ja SecondPlayerTest
+                call GAME_OVER 
    
-	;------------------------------- check whether the 2nd player has been hit? ----------------------
-	SecondPlayerTest:      
+;------------------------------- check whether the 2nd player has been hit? ----------------------
+SecondPlayerTest:
                 
-	                       cmp  Player2_DecHealth,0
-	                       je   CheckIncHealthP1
+                 cmp Player2_DecHealth,0 
+                 je CheckIncHealthP1  
 
-	;------------------- check whether the 2nd player is the loser?
-	                       sub  Player2_Health_cx,1
-	                       cmp  Player2_Health_cx, 251
-	                       ja   decHealth2
-	                       ret
-
-	decHealth2:            
+;------------------- check whether the 2nd player is the loser?
+                sub Player2_Health_cx,1
+                cmp Player2_Health_cx, 253
+                ja decHealth2
+                call GAME_OVER 
                  
-	                       mov  cx, Player2_Health_cx
-	                       mov  dx,10
-	                       mov  al,04
-	                       mov  ah,0ch
-	decP2:                 int  10h
-	                       inc  dx
-	                       cmp  dx,19
-	                       jnz  decP2
-	                       Inc  countHB2
-	                       cmp  countHB2,2
-	                       jb   doubleHB2
-	                       jmp  countinueHB2
+
+ decHealth2:
+                 
+                mov cx, Player2_Health_cx
+                mov dx,10
+                mov al,04       
+                mov ah,0ch 
+                decP2: int 10h
+                inc dx
+                cmp dx,19
+                jnz decP2
+                Inc countHB2
+                cmp countHB2,2
+                jb doubleHB2
+                jmp countinueHB2
                 
-	doubleHB2:             dec  Player2_Health_cx
-	                       jmp  decHealth2
-	countinueHB2:          
-	                       mov  countHB2,0
+                doubleHB2: dec Player2_Health_cx 
+                jmp decHealth2
+                countinueHB2:
+                mov countHB2,0
 
-	;------------------- check again whether the 2nd player is the loser?
-	                       cmp  Player2_Health_cx, 251
-	                       ja   CheckIncHealthP1
-	                       ret
+;------------------- check again whether the 2nd player is the loser?
+                cmp Player2_Health_cx, 253
+                ja CheckIncHealthP1
+                call GAME_OVER
 
 
-	;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Increase health
-	;-------------------- check whether the first player caught a powerup to increase his health?------
-	CheckIncHealthP1:      
-	                       cmp  Player1_IncHealth,0
-	                       je   CheckIncHealthP2
 
-	;------------- if he caught a powerup then:
-	                       cmp  Player1_Health_cx,69              	; if his health is full then do nothing
-	                       je   CheckIncHealthP2
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Increase health
+;-------------------- check whether the first player caught a powerup to increase his health?------
+CheckIncHealthP1:
+                cmp Player1_IncHealth,0
+                je CheckIncHealthP2
 
-	IncHealth1:            
-	                       mov  cx, Player1_Health_cx
-	                       mov  dx,10
-	                       mov  al,02h                            	;Pixel color
-	                       mov  ah,0ch                            	;Draw Pixel Command
-	incP1:                 int  10h
-	                       inc  dx
-	                       cmp  dx,19
-	                       jnz  incP1
-	                       Inc  countINC1                         	;for only doubling the value to increase
-	                       cmp  countINC1,2
-	                       jb   doubleINCHB1
-	                       jmp  countinueHBinc
+;------------- if he caught a powerup then: 
+                cmp Player1_Health_cx,69 ; if his health is full then do nothing
+                je CheckIncHealthP2 
+
+IncHealth1:
+                mov cx, Player1_Health_cx
+                mov dx,10
+                mov al,02h ;Pixel color
+                mov ah,0ch ;Draw Pixel Command
+                incP1: int 10h
+                inc dx
+                cmp dx,19
+                jnz incP1
+                Inc countINC1    ;for only doubling the value to increase 
+                cmp countINC1,2
+                jb doubleINCHB1
+                jmp countinueHBinc
                 
-	doubleINCHB1:          inc  Player1_Health_cx
-	                       jmp  IncHealth1
-	countinueHBinc:        
-	                       mov  countINC1,0
+                doubleINCHB1: inc Player1_Health_cx 
+                jmp IncHealth1
+                countinueHBinc:
+                mov countINC1,0
 
-	;-------------------- check whether the second player caught a powerup to increase his health?------
+;-------------------- check whether the second player caught a powerup to increase his health?------
 
-	CheckIncHealthP2:      
-	                       cmp  Player2_IncHealth,0
-	                       je   check_draw_HB
+CheckIncHealthP2:
+                cmp Player2_IncHealth,0
+                je check_draw_HB
 
-	;------------- if he caught a powerup then:
-	                       cmp  Player2_Health_cx,299             	; if his health is full then do nothing
-	                       je   check_draw_HB
+;------------- if he caught a powerup then: 
+                cmp Player2_Health_cx,299 ; if his health is full then do nothing
+                je check_draw_HB
 
-	IncHealth2:            
-	                       mov  cx, Player2_Health_cx
-	                       mov  dx,10
-	                       mov  al,02h                            	;Pixel color
-	                       mov  ah,0ch                            	;Draw Pixel Command
-	incP2:                 int  10h
-	                       inc  dx
-	                       cmp  dx,19
-	                       jnz  incP2
-	                       Inc  countINC2                         	;for only doubling the value to increase
-	                       cmp  countINC2,2
-	                       jb   doubleINCHB2
-	                       jmp  countinueHBinc2
+IncHealth2:
+                mov cx, Player2_Health_cx
+                mov dx,10
+                mov al,02h ;Pixel color
+                mov ah,0ch ;Draw Pixel Command
+                incP2: int 10h
+                inc dx
+                cmp dx,19
+                jnz incP2
+                Inc countINC2    ;for only doubling the value to increase 
+                cmp countINC2,2
+                jb doubleINCHB2
+                jmp countinueHBinc2
                 
-	doubleINCHB2:          inc  Player2_Health_cx
-	                       jmp  IncHealth2
-	countinueHBinc2:       
-	                       mov  countINC2,0
+                doubleINCHB2: inc Player2_Health_cx 
+                jmp IncHealth2
+                countinueHBinc2:
+                mov countINC2,0
 
-	;---------------------------------- to make sure that it is drawn once ------------------
-	check_draw_HB:         
-	                       mov  ax, HealthBarDrawn
-	                       cmp  ax,0
-	                       je   DrawFirst
+;---------------------------------- to make sure that it is drawn once ------------------      
+check_draw_HB:  
+                mov ax, HealthBarDrawn
+                cmp ax,0
+                je DrawFirst 
 
 
-	ReFinish:              jmp  FinishHealthBar
+ReFinish: jmp FinishHealthBar
 
-	;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Draw health bar once
-	; ---------------------------------- Backcolor of health bar------------------------------
-	DrawFirst:             
-	                       mov  al,0fh                            	; backcolor of the bar
-	                       mov  ah,0ch
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Draw health bar once
+; ---------------------------------- Backcolor of health bar------------------------------
+DrawFirst:
+                mov al,0h ; backcolor of the bar 
+                mov ah,0ch   
 
-	; position of 1st player's health bar
-	                       mov  cx,20
-	                       mov  dx,9
+                ; position of 1st player's health bar 
+                mov cx,20 
+                mov dx,9
             
-	                       cmp  HealthBarPos, 70                  	; if it is for the first player then jump to temp
-	                       Je   temp
+                cmp HealthBarPos, 70  ; if it is for the first player then jump to temp
+                Je temp 
 
-	; else update x position for the 2nd player's health bar
-	                       mov  cx, 250
+                ; else update x position for the 2nd player's health bar                          
+                mov cx, 250
     
-	; store values of cx, dx to loop on them according to which player's health bar is being drawn
-	temp:                  
-	                       mov  temp_cx_HealthBar, cx
-	                       mov  temp2_cx_HealthBar, cx            	; stores the original value of cx, before updating it
-	                       add  temp_cx_HealthBar, 50
-	                       mov  temp_dx_HealthBar, dx
-	                       add  temp_dx_HealthBar, dx
-	                       add  temp_dx_HealthBar, 2
+                ; store values of cx, dx to loop on them according to which player's health bar is being drawn
+    temp:
+                mov temp_cx_HealthBar, cx
+                mov temp2_cx_HealthBar, cx ; stores the original value of cx, before updating it
+                add temp_cx_HealthBar, 50
+                mov temp_dx_HealthBar, dx
+                add temp_dx_HealthBar, dx
+                add temp_dx_HealthBar, 2
 
-	BarBackDrawing:        
-	                       inc  cx
-	                       int  10h
-	                       cmp  cx, temp_cx_HealthBar
-	                       JNE  BarBackDrawing
-	                       mov  cx, temp2_cx_HealthBar
-	                       inc  dx
-	                       cmp  dx, temp_dx_HealthBar
-	                       JNE  BarBackDrawing
+    BarBackDrawing:
+                inc cx
+                int 10h
+                cmp cx, temp_cx_HealthBar
+                JNE BarBackDrawing
+                mov cx, temp2_cx_HealthBar  
+                inc dx      
+                cmp dx, temp_dx_HealthBar
+                JNE BarBackDrawing
 
-	;-------------------------------- Filling the bar with greencolor ------------------------------
-	                       mov  al,02h                            	; defult green color for the filling of the bar
-	                       mov  ah,0ch
+;-------------------------------- Filling the bar with greencolor ------------------------------
+                mov al,02h  ; defult green color for the filling of the bar
+                mov ah,0ch   
 
-	; position of 1st player's health bar
-	                       mov  cx, 21
-	                       mov  dx,10
-	                       cmp  HealthBarPos, 70                  	; if it is for the first player then jump to temp
-	                       Je   tempFilling
+                ; position of 1st player's health bar 
+                mov cx, 21
+                mov dx,10
+                cmp HealthBarPos, 70  ; if it is for the first player then jump to temp
+                Je tempFilling
 
-	; else update x position for the 2nd player's health bar
-	                       mov  cx, 251
+                ; else update x position for the 2nd player's health bar                          
+                mov cx, 251
     
-	; store values of cx, dx to loop on them according to which player's health bar is being drawn
-	tempFilling:           
-	                       mov  temp_cx_HealthFillingBar, cx
-	                       mov  temp2_cx_HealthFillingBar, cx     	; stores the original value of cx, before updating it
-	                       add  temp_cx_HealthFillingBar, 48
+                ; store values of cx, dx to loop on them according to which player's health bar is being drawn
+    tempFilling:
+                mov temp_cx_HealthFillingBar, cx
+                mov temp2_cx_HealthFillingBar, cx ; stores the original value of cx, before updating it
+                add temp_cx_HealthFillingBar, 48
 
-	BarFilling:            
-	                       inc  cx
-	                       int  10h
-	                       cmp  cx, temp_cx_HealthFillingBar
-	                       JNE  BarFilling
-	                       mov  cx,temp2_cx_HealthFillingBar
-	                       inc  dx
-	                       cmp  dx, 19
-	                       JNE  BarFilling
+    BarFilling:
+                inc cx
+                int 10h
+                cmp cx, temp_cx_HealthFillingBar 
+                JNE BarFilling
+                mov cx,temp2_cx_HealthFillingBar 
+                inc dx      
+                cmp dx, 19
+                JNE BarFilling
 
-	                       mov  Player1_Health_cx,70
-	                       mov  Player2_Health_cx,300
+             mov Player1_Health_cx,70
+             mov Player2_Health_cx,300
 
-	FinishHealthBar:       
-	                       mov  Player2_DecHealth,0
-	                       mov  Player1_DecHealth,0
-	                       mov  Player1_IncHealth,0
-	                       mov  Player2_IncHealth,0
-	                       RET
+FinishHealthBar:
+             mov  Player2_DecHealth,0
+             mov  Player1_DecHealth,0
+             mov  Player1_IncHealth,0
+             mov  Player2_IncHealth,0
+RET
 
 Draw_Health_Bar ENDP
+
+
+
 
 ;-------------------------------DRAWING THE HITS PROCEDURES-----------------------------------
 
@@ -3014,5 +3026,154 @@ GenerateRandomPowerUp2 proc
 	                       mov  ChesonPowerUp2, dx
 	                       ret
 GenerateRandomPowerUp2 Endp
-;----------------------------------------------------------------------------------------------------
+
+;--------------------------------------	GAME OVER PROCEDURE------------------------------------------------------------
+ GAME_OVER PROC
+  
+					mov  Player2_DecHealth,0
+					mov  Player1_DecHealth,0
+					mov  Player1_IncHealth,0
+					mov  Player2_IncHealth,0
+
+				;clear
+					mov ax,0600h
+					mov bh,07
+					mov cx,0
+					mov dx,184FH
+					int 10h 
+
+				
+
+					; graphics mode
+					mov ah,0
+					mov al,13h
+					int 10h
+
+					; move cursor
+					mov dl, 7 ; column. 
+					mov dh, 3 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h
+
+					; Display ANGRY PETS
+					mov ah,09
+					mov dh,0
+					mov dx, offset ANGRY_PETS
+					int 21h
+					
+					;Set the cursor 
+					mov dl, 15 ; column. 
+					mov dh, 10 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h
+					
+					; Display the game over  
+					mov ah,09
+					mov dh,0
+					mov dx, offset GAME_OVER_STR
+					int 21h      
+
+
+
+					;Set the cursor 
+					mov dl, 11 ; column. 
+					mov dh, 12 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h
+					
+					; Display the winner 
+					mov ah,09
+					mov dh,0
+					mov dx, offset THE_WINNER
+					int 21h       
+
+
+					cmp Player2_Health_cx, 253  ; Check this health if it reaches the minimum then player 2 is the loser
+					je LOSER_DOG
+
+					cmp Player1_Health_cx, 23   ; Check this health if it reaches the minimum then player 1 is the loser 
+					je LOSER_CAT
+
+
+
+					LOSER_DOG:  ; then player 1 is the winner
+					mov ah,09
+					mov dh,0
+					mov dx, offset FIRST_PLAYER_NAME+2
+					int 21h 
+					jmp EndOfTheGame 
+
+					LOSER_CAT:   ; then player 2 is the winner
+					mov ah,09
+					mov dh,0
+					mov dx, offset SECOND_PLAYER_NAME+2
+					int 21h 
+					jmp EndOfTheGame 
+
+					
+
+
+			EndOfTheGame:
+
+					; move the cursor to the end of the screen
+					mov dl, 0; column. 
+					mov dh, 19 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h 
+					
+					mov cx,40
+					Print_ :
+					mov ah,2 
+					mov dl,'-'
+					int 21h 
+					loop print_ 
+
+					; move the cursor to the end of the screen
+					mov dl, 2 ; column. 
+					mov dh,  21 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h
+
+					; display final msg
+					mov ah,09
+					mov dh,0
+					mov dx, offset FINALMSG_MENU
+					int 21h 
+
+					; move the cursor
+					mov dl, 2 ; column. 
+					mov dh,  23 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h
+					
+					; display final msg
+					mov ah,09
+					mov dh,0
+					mov dx, offset FINALMSG_ESC
+					int 21h 
+
+					FINAL_PRESS:
+					mov ah,0
+					int 16h
+					cmp ah, 02
+					jz return_to_main_menu 
+					cmp ah, 01
+					jz end_the_game
+					jmp FINAL_PRESS
+
+					return_to_main_menu: 
+					call MAINMENU
+
+					end_the_game:
+					mov ah,4ch
+					int 21h
+GAME_OVER Endp
+
+
 END MAIN
