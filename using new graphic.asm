@@ -241,6 +241,8 @@
 	MSG9                      DB  'SECOND PLAYER: ','$'
 	MSG13                     DB  'This option is currently not available','$'
 	MSG14                     DB  'The game will start now ... enjoy <3','$'
+	ERRMSG DB '>>>>>>>>>>>>Your name should start with a letter only<<<<<<<<<<<<','$'
+	ISVALID DB 1
 	LOGO_W                    DW  320
 	LOGO_H                    DW  140
 	LOGO_img                  DB  31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31
@@ -1379,94 +1381,143 @@ STARTINGSCREEN proc
 	                       RET
 STARTINGSCREEN ENDP
 MAINMENU PROC
-	STARTMENU:             MOV  AH,0
-	                       MOV  AL,3
-	                       INT  10H
+	STARTMENU:     MOV  AH,0
+	               MOV  AL,3
+	               INT  10H
 	;; MOVING CURSOR TO NEEDED POSITION
-	                       MOV  DL , 25
-	                       MOV  DH , 5
-	                       MOV  AH,2
-	                       INT  10h
+	               MOV  DL , 25
+	               MOV  DH , 5
+	               MOV  AH,2
+	               INT  10h
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	                       MOV  DX, OFFSET MSG1
-	                       MOV  AH,9
-	                       INT  21H
+	               MOV  DX, OFFSET MSG1
+	               MOV  AH,9
+	               INT  21H
 	;; MOVING CURSOR TO NEEDED POSITION
-	                       MOV  DL , 20
-	                       MOV  DH , 6
-	                       MOV  AH,2
-	                       INT  10h
+	               MOV  DL , 20
+	               MOV  DH , 6
+	               MOV  AH,2
+	               INT  10h
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	                       MOV  DX, OFFSET MSG2
-	                       MOV  AH,9
-	                       INT  21H
+	               MOV  DX, OFFSET MSG2
+	               MOV  AH,9
+	               INT  21H
 	;; MOVING CURSOR TO NEEDED POSITION
-	                       MOV  DL , 25
-	                       MOV  DH , 7
-	                       MOV  AH,2
-	                       INT  10h
+	               MOV  DL , 25
+	               MOV  DH , 7
+	               MOV  AH,2
+	               INT  10h
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	                       CMP  ISFIRSTPLAYER , 1
-	                       JZ   PLAYERONE
-	                       JMP  PLAYERTWO
+	               CMP  ISFIRSTPLAYER , 1
+	               JZ   PLAYERONE
+	               JMP  PLAYERTWO
 
-	CONT:                  MOV  AH,9
-	                       INT  21H
+	CONT:          MOV  AH,9
+	               INT  21H
 
 	;; MOVING CURSOR TO NEEDED POSITION
-	                       MOV  DL , 25
-	                       MOV  DH , 9
-	                       MOV  AH,2
-	                       INT  10h
+	               MOV  DL , 25
+	               MOV  DH , 9
+	               MOV  AH,2
+	               INT  10h
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	                       MOV  DX, OFFSET MSG4
-	                       MOV  AH,9
-	                       INT  21H
+	               MOV  DX, OFFSET MSG4
+	               MOV  AH,9
+	               INT  21H
 	;;;;;;;;;;;;;;;;;;;;;;
 	;; MOVING CURSOR TO NEEDED POSITION
-	                       MOV  DL , 25
-	                       MOV  DH , 11
-	                       MOV  AH,2
-	                       INT  10h
+	               MOV  DL , 25
+	               MOV  DH , 11
+	               MOV  AH,2
+	               INT  10h
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	                       MOV  DX, OFFSET MSG5
-	                       MOV  AH,9
-	                       INT  21H
+	               MOV  DX, OFFSET MSG5
+	               MOV  AH,9
+	               INT  21H
 	;; MOVING CURSOR TO NEEDED POSITION
-	                       MOV  DL , 3
-	                       MOV  DH , 19
-	                       MOV  AH,2
-	                       INT  10h
+	               MOV  DL , 3
+	               MOV  DH , 19
+	               MOV  AH,2
+	               INT  10h
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	                       MOV  DX, OFFSET MSG6
-	                       MOV  AH,9
-	                       INT  21H
+	               MOV  DX, OFFSET MSG6
+	               MOV  AH,9
+	               INT  21H
+				   CMP ISVALID , 0
+				   JZ INVALIDMSG
 	;; MOVING CURSOR TO NEEDED POSITION
-	                       MOV  DL , 32
-	                       MOV  DH , 9
-	                       MOV  AH,2
-	                       INT  10h
+	 TAKENAME:              MOV  DL , 32
+	               MOV  DH , 9
+	               MOV  AH,2
+	               INT  10h
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Read name
-	                       CMP  ISFIRSTPLAYER , 1
-	                       JZ   PLAYERONEstore
-	                       JMP  PLAYERTWOstore
-	CONT2:                 MOV  AH,0Ah
-	                       INT  21H
-	                       CMP  ISFIRSTPLAYER,1
-	                       JNZ  ENDPR
-	                       MOV  ISFIRSTPLAYER , 0
-	                       JMP  STARTMENU
-	PLAYERONE:             MOV  DX, OFFSET MSG3
-	                       JMP  CONT
-	PLAYERTWO:             MOV  DX,OFFSET MSG7
-	                       JMP  CONT
-	PLAYERONEstore:        MOV  DX , OFFSET FIRST_PLAYER_NAME
-	                       JMP  CONT2
-	PLAYERTWOstore:        MOV  DX , OFFSET SECOND_PLAYER_NAME
-	                       JMP  CONT2
-	ENDPR:                 MOV  ISFIRSTPLAYER , 1
-	                       RET
+	      CMP  ISFIRSTPLAYER , 1
+	               JZ   PLAYERONEstore
+	               JMP  PLAYERTWOstore
+	CONT2:         MOV  AH,0Ah
+	               INT  21H
+				   CMP  ISFIRSTPLAYER , 1
+				   JZ VALIDATEPLAYERONE
+				   JMP VALIDATEPLAYERTWO
+	CONT3:         CMP  ISFIRSTPLAYER,1
+	               JNZ  ENDPR
+	               MOV  ISFIRSTPLAYER , 0
+	               JMP  STARTMENU
+	PLAYERONE:     MOV  DX, OFFSET MSG3
+	               JMP  CONT
+	PLAYERTWO:     MOV  DX,OFFSET MSG7
+	               JMP  CONT
+	PLAYERONEstore:MOV  DX , OFFSET FIRST_PLAYER_NAME
+	               JMP  CONT2
+	PLAYERTWOstore:MOV  DX , OFFSET SECOND_PLAYER_NAME
+	               JMP  CONT2
+	VALIDATEPLAYERONE:
+					MOV SI , OFFSET FIRST_PLAYER_NAME+2
+					MOV BL , [SI]
+					CMP BL , 41H
+					JGE SECONDCHECKN
+					JMP INVALID
+	SECONDCHECKN:	CMP BL ,5AH
+					JLE VALIDNAME
+	THIRDCHECK:     CMP BL , 61H
+					JGE FORTHCHECK
+					JMP INVALID
+	FORTHCHECK:      CMP BL,7AH
+					JLE VALIDNAME
+					JMP INVALID
+
+	VALIDNAME:     	MOV ISVALID,1
+	JMP CONT3	
+
+	INVALID:         MOV ISVALID,0
+	JMP STARTMENU
+	INVALIDMSG:   MOV  DL , 5
+	               MOV  DH , 21
+	               MOV  AH,2
+	               INT  10h
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	               MOV  DX, OFFSET ERRMSG
+	               MOV  AH,9
+	               INT  21H	
+				   JMP  TAKENAME
+	ENDPR:        MOV  ISFIRSTPLAYER , 1
+	 RET
+	 
+	VALIDATEPLAYERTWO:
+					MOV SI , OFFSET SECOND_PLAYER_NAME+2
+					MOV BL , [SI]
+					CMP BL , 41H
+					JGE SECONDCHECKT
+					JMP INVALID
+	SECONDCHECKT:	CMP BL ,5AH
+					JLE VALIDNAME
+	THIRDCHECKT:     CMP BL , 61H
+					JGE FORTHCHECKT
+					JMP INVALID
+	FORTHCHECKT:      CMP BL,7AH
+					JLE VALIDNAME
+					JMP INVALID
 MAINMENU ENDP
 ;;------------------DISPLAY THE NAME OF ENTERED USERS-------------
 SHOWNAMES PROC
@@ -1630,7 +1681,7 @@ STARTTHEGAME PROC
 	                    
 
 	DogDrawing:            
-	                       mov  BX , 290
+	                       mov  BX , 285
 	                       mov  DX  ,115
 	                       mov  xd, BX
 	                       mov  yd , DX
@@ -1850,7 +1901,7 @@ delay Endp
 ;;This one is used For gravity because it is much less than the above delay
 delay2 proc
 	                       mov  di,00FFAH
-	LOP12D:                MOV  CX,300
+	LOP12D:                MOV  CX,95
 	LOP22D:                LOOP LOP22D
 	                       DEC  DI
 	                       JNZ  LOP12D
@@ -1939,7 +1990,7 @@ ENDMOVING:
 						   
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
-	;call delay2                       	;;Draw with new onw
+	call delay2                       	;;Draw with new onw
 	                       MOV  AX , GravityAccleration
 	                       ADD  yCoord , AX
 	                       MOV  AX , yCoord
@@ -1956,7 +2007,7 @@ ENDMOVING:
 						   
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
-	;call delay2                       	;;Draw with new onw
+	call delay2                       	;;Draw with new onw
 	                       MOV  AX , GravityAccleration
 	                       ADD  yCoord , AX
 	                       MOV  AX , yCoord
@@ -2032,7 +2083,7 @@ D_ENDMOVING:
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
 						   
-	;call delay2                       	;;Draw with new onw
+	call delay2                       	;;Draw with new onw
 	                       MOV  AX , GravityAccleration
 	                       ADD  yd , AX
 	                       MOV  AX , yd
@@ -2049,7 +2100,7 @@ D_ENDMOVING:
 						   
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
-	;call delay2                       	;;Draw with new onw
+	call delay2                       	;;Draw with new onw
 	                       MOV  AX , GravityAccleration
 	                       ADD  yd , AX
 	                       MOV  AX , yd
@@ -2697,7 +2748,8 @@ read_the_key proc
 	                       jmp  kamel_ball
 	                       jmp  ReadKey
 
-	dog_MoveRight:         cmp  xd, 285
+	dog_MoveRight:         cmp  xd, 284
+
 	                       jae  ReadKey
 	                       add  xd , 6
 	                       jmp  kamel_ball
@@ -3380,7 +3432,11 @@ GenerateRandomPowerUp2 Endp
 					jmp FINAL_PRESS
 
 					return_to_main_menu: 
+					MOV ISVALID , 1
+					MOV start_hitting ,0
+					MOV start_balling , 0
 					call MAINMENU
+					call STARTINGSCREEN
 
 					end_the_game:
 					mov ah,4ch
