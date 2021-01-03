@@ -2606,9 +2606,9 @@ read_the_key proc
 	                       call UpdatedBackground
 	                       call DrawHeart
 	                       call DrawHeart2
-	                       call CharacterGravity
 	                       call DrawCat
 	                       call DrawDog
+						   call CharacterGravity
 	                       call DOG_CharacterGravity
 	;call delay
 	                       jmp  CHECK
