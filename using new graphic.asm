@@ -191,6 +191,7 @@
 	secondstepline            dw  69d
 	GravityAccleration        dw  8d
 	isFalling                 dw  0
+	isJumping				  dw 0
 	;detect if the player is falling or not
 	; health bar drawing
 	HealthBarPos              db  '$'
@@ -1900,11 +1901,10 @@ delay proc
 delay Endp
 ;;This one is used For gravity because it is much less than the above delay
 delay2 proc
-	                       mov  di,00FFAH
-	LOP12D:                MOV  CX,75
-	LOP22D:                LOOP LOP22D
-	                       DEC  DI
-	                       JNZ  LOP12D
+	mov cx,0
+	mov dx,0a120h
+	mov ah,86h
+	int 15h
 	                       ret
 delay2 Endp
 waitForNewVR PROC
@@ -1930,6 +1930,13 @@ waitForNewVR ENDP
 ;-------------------------------GRAVITY HANDLING PROCEDURES-----------------------------------
 
 CharacterGravity proc
+cmp start_hitting , 1
+jz CHECKJUMPING
+jmp MOVINGPLAYERDOWN
+CHECKJUMPING: CMP isJumping , 1
+jnz RETURNTOHITTING
+jmp MOVINGPLAYERDOWN
+RETURNTOHITTING : ret
 	;;yCoord represents the y coordinate of the character (at his head)
 	MOVINGPLAYERDOWN:      
 	                       MOV  AX , yCoord
@@ -1987,7 +1994,7 @@ ENDMOVINGSTEP1: mov yCoord , 79
 ENDMOVINGSTEP2:  MOV yCoord , 43
 RET
 	LANDONSTEP:            call waitForNewVR
-	call delay2
+	;call delay2
 	                       call DrawBackGround                 	;;Remove the old position
 	                       call DrawHeart
 	                       call DrawHeart2
@@ -2004,7 +2011,7 @@ RET
 	                       JMP  LANDONSTEP
 
 	LANDONSTEP2:           call waitForNewVR
-	call delay2
+	;call delay2
 	                       call DrawBackGround              	;;Remove the old position
 	                       call DrawHeart
 						   
@@ -2633,8 +2640,9 @@ CatHitDog proc
 						   
 	                       call DrawDog
 	                       call DrawCat
+						   
 	                        call DrawFish
-	                      call CharacterGravity
+	                     call CharacterGravity
                           
 						   
 	                       call read_the_key
@@ -2690,7 +2698,7 @@ CatHitDog proc
 CatHitDog endp
 ;-------------------------------READING KEYS FROM PLAYERS-----------------------------------
 read_the_key proc
-
+mov isJumping , 0
 	CHECK:                 mov  ah,1
 	                       int  16h
 	                       jz   reyooo
@@ -2732,7 +2740,7 @@ read_the_key proc
 	                       call DrawHeart2         
 						   call DrawCat
 	                       call DrawDog
-						   
+						  
 	                       jmp  CHECK
 						   ;;;;;;;;;;;;;;;;;;;;;; temp lables ;;;;;;;;;;;;;;;;;;;
 	reyooo:                jmp  yooo
@@ -2747,13 +2755,13 @@ read_the_key proc
 	                       jle  ReadKey
 	                       sub  xCoord,6
 	                       jmp  kamel_darb
-	                       jmp  ReadKey
+	                       
 	MoveRight:             cmp  xCoord, 292
 	                       jge  ReadKey
 	                       add  xCoord , 6
 	                       jmp  kamel_darb
-	                       jmp  ReadKey
-	JUMPUP:                
+	                      
+	JUMPUP:                mov isJumping , 1
 						   cmp yCoord ,70
 						   jle SHORTJUMP
 						   JMP HIGHJUMP
@@ -2817,7 +2825,9 @@ read_the_key proc
 	Again:                 jmp  CHECK
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;; FINISH ;;;;;;;;;;;;;;;;;;;;;;;;
-	bye:                   ret
+	bye:        
+	
+	           ret
 
 read_the_key endp
 ;-------------------------------POWER UPS PROCEDURES-----------------------------------
