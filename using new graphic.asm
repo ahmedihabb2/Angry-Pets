@@ -102,7 +102,8 @@
                             DB 14, 43, 43, 14, 14, 6, 6, 43, 43, 43, 14, 14, 14, 14, 43, 43, 43, 43, 14, 14, 6, 6, 6, 43, 43, 43, 43, 43, 43, 43, 43, 43, 14, 14, 14, 16, 6, 6, 6, 43 
                             DB 43, 43, 43, 43, 43, 43, 14, 14, 14, 16, 16, 16, 6, 6, 6, 43, 14, 14, 14, 14, 14, 14, 14, 16, 16
                             ​
-
+	COIN					DB 6, 6, 42, 43, 43, 43, 14, 14, 6, 43, 43, 42, 42, 43, 43, 14, 42, 43, 42, 43, 43, 43, 43, 14, 42, 43, 42, 43, 43, 14, 43, 14, 42, 43, 42, 43, 43, 14, 43, 14 
+ 							DB 6, 43, 42, 43, 43, 43, 43, 14, 6, 43, 43, 43, 43, 43, 43, 14, 6, 6, 43, 43, 43, 14, 14, 14
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;; fish variables ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	fish_W                    equ 20                                                                                                                                                                                              	; fish width
@@ -1499,6 +1500,52 @@ pop dx
 pop ax
 ret
 DrawNames ENDp
+
+DRAW_SCORE_ICON PROC 
+
+MOV  AH,0Bh
+	                       MOV  CX, 114
+	                       MOV  DX, 14
+	                       mov  DI, offset COIN
+	                       jmp  StartIconScore
+	DrawIconScore:                
+	                       MOV  AH,0Ch
+	                       mov  al, [DI]
+	                       MOV  BH,00h
+	                       INT  10h
+	StartIconScore:                 
+	                       inc  DI
+	                       DEC  Cx
+						   cmp cx, 106
+	                       JNZ  DrawIconScore
+	                       mov  Cx, 114
+	                       DEC  DX
+						   cmp DX, 6
+	                       Jnz  DrawIconScore
+	                       
+						   MOV  CX, 210
+	                       MOV  DX, 14
+	                       mov  DI, offset COIN
+	                       jmp  StartIconScore2
+	DrawIconScore2:                
+	                       MOV  AH,0Ch
+	                       mov  al, [DI]
+	                       MOV  BH,00h
+	                       INT  10h
+	StartIconScore2:                 
+	                       inc  DI
+	                       DEC  Cx
+						   cmp cx, 202
+	                       JNZ  DrawIconScore2
+	                       mov  Cx, 210
+	                       DEC  DX
+						   cmp DX, 6
+	                       Jnz  DrawIconScore2
+
+RET
+DRAW_SCORE_ICON ENDP
+
+
 ;----------------------------------------GAME PROCEDURES----------------------------------------------
 
 STARTTHEGAME PROC
@@ -1526,6 +1573,7 @@ STARTTHEGAME PROC
 						   call DrawCatLogo
 	                       call DrawDogLogo
 						   call DrawNames
+						   call DRAW_SCORE_ICON
 						   mov  CurrentPowerUp, 0
 	                       call GenerateRandomNumber
 	                       call GenerateRandomPowerUp
