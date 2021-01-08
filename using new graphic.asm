@@ -1840,16 +1840,16 @@ waitForNewVR PROC
 	                       RET
 waitForNewVR ENDP
 
-;-------------------------------GRAVITY HANDLING PROCEDURES-----------------------------------
+	;-------------------------------GRAVITY HANDLING PROCEDURES-----------------------------------
 
 CharacterGravity proc
-cmp start_hitting , 1
-jz CHECKJUMPING
-jmp MOVINGPLAYERDOWN
-CHECKJUMPING: CMP isJumping , 1
-jnz RETURNTOHITTING
-jmp MOVINGPLAYERDOWN
-RETURNTOHITTING : ret
+	                       cmp  start_hitting , 1
+	                       jz   CHECKJUMPING
+	                       jmp  MOVINGPLAYERDOWN
+	CHECKJUMPING:          CMP  isJumping , 1
+	                       jnz  RETURNTOHITTING
+	                       jmp  MOVINGPLAYERDOWN
+	RETURNTOHITTING:       ret
 	;;yCoord represents the y coordinate of the character (at his head)
 	MOVINGPLAYERDOWN:      
 	                       MOV  AX , yCoord
@@ -1865,14 +1865,13 @@ RETURNTOHITTING : ret
 	                       add  AX , cat_H
 	                       CMP  AX,LandLine                       	;;if the character reaches the ground we stop the gravity effect , else it continue to fall
 	                       Jge  ENDMOVING
-						   ;call DrawBackGround
-	                       ;call waitForNewVR
-	                       
-	                      ; call DrawHeart
-	                       ;call DrawHeart2
+	                       call waitForNewVR
+	                       call DrawBackGround
+	                       call DrawHeart
+	                       call DrawHeart2
 						   
-	                       ;call DrawCat
-	                       ;call DrawDog
+	                       call DrawCat
+	                       call DrawDog
 	;call delay2
 	                       jmp  MOVINGPLAYERDOWN
 					 
@@ -1881,7 +1880,7 @@ RETURNTOHITTING : ret
 	                       CMP  BX ,35
 	                       JGE  SECONDCHECK
 	                       JMP  CONTMOVING
-	SECONDCHECK:           CMP  BX,125
+	SECONDCHECK:           CMP  BX,118
 	                       JLE  LANDONSTEP                        	;;if the character between x Coordinates of the first step we jump to this label in order to make the character lands on step
 	                       JMP  CHECKBEFOREEND2
 	CHECKBEFOREEND2:       MOV  BX , xCoord
@@ -1889,7 +1888,7 @@ RETURNTOHITTING : ret
 	                       JGE  SECONDCHECK2
 	                       JMP  CONTMOVING
 	SECONDCHECK2:          CMP  BX,268
-	                       JLE  LANDONSTEP                 	;;if the character between x Coordinates of the second step we jump to this label in order to make the character lands on step
+	                       JLE  LANDONSTEP                        	;;if the character between x Coordinates of the second step we jump to this label in order to make the character lands on step
 	                       JMP  CONTMOVING
 	;;This label is for checking if the cat at the X coordinates of the third step
 	CHECKBEFOREENDSTEP2:   MOV  BX , xCoord
@@ -1901,21 +1900,21 @@ RETURNTOHITTING : ret
 	                       JMP  CONTMOVING
 ENDMOVING:
 
-	                      mov yCoord , 115
+	                       mov  yCoord , 115
 	                       ret
 ENDMOVINGSTEP1: mov yCoord , 79
 	                       ret
-ENDMOVINGSTEP2:  MOV yCoord , 43
-RET
+ENDMOVINGSTEP2: MOV yCoord , 43
+	                       RET
 	LANDONSTEP:            call waitForNewVR
 	;call delay2
-	                       call DrawBackGround                 	;;Remove the old position
+	                       call DrawBackGround                    	;;Remove the old position
 	                       call DrawHeart
 	                       call DrawHeart2
 						   
 	                       call DrawCat                           	;;Draw with new onw
 	                       call DrawDog
-	                       	;;Draw with new onw
+	;;Draw with new onw
 	                       MOV  AX , GravityAccleration
 	                       ADD  yCoord , AX
 	                       MOV  AX , yCoord
@@ -1926,7 +1925,7 @@ RET
 
 	LANDONSTEP2:           call waitForNewVR
 	;call delay2
-	                       call DrawBackGround              	;;Remove the old position
+	                       call DrawBackGround                    	;;Remove the old position
 	                       call DrawHeart
 						   
 	                       call DrawHeart2
@@ -1944,7 +1943,7 @@ RET
 	
 
 CharacterGravity Endp
-;----------DOG GRAVITY------------------
+	;----------DOG GRAVITY------------------
 DOG_CharacterGravity proc
 	;;yCoord represents the y coordinate of the character (at his leg)
 	D_MOVINGPLAYERDOWN:    
@@ -1961,14 +1960,14 @@ DOG_CharacterGravity proc
 	                       add  AX , dog_H
 	                       CMP  AX,LandLine                       	;;if the character reaches the ground we stop the gravity effect , else it continue to fall
 	                       Jge  D_ENDMOVING
-	                       ;call waitForNewVR
-	                       ;call DrawBackGround
-	                       ;call DrawHeart
+	                       call waitForNewVR
+	                       call DrawBackGround
+	                       call DrawHeart
 						   
-	                       ;call DrawHeart2
+	                       call DrawHeart2
 						   
-	                       ;call DrawCat
-	                       ;call DrawDog
+	                       call DrawCat
+	                       call DrawDog
 	;call delay2
 	                       jmp  D_MOVINGPLAYERDOWN
 					 
@@ -1997,15 +1996,15 @@ DOG_CharacterGravity proc
 	                       JMP  D_CONTMOVING
 D_ENDMOVING:
 
-	                      mov yd , 115
+	                       mov  yd , 115
 	                       ret
 D_ENDMOVINGSTEP1: mov yd , 79
 	                       ret
-D_ENDMOVINGSTEP2:  MOV yd , 43
-RET
+D_ENDMOVINGSTEP2: MOV yd , 43
+	                       RET
 
 	D_LANDONSTEP:          call waitForNewVR
-	                       call DrawBackGround                 	;;Remove the old position
+	                       call DrawBackGround                    	;;Remove the old position
 	                       call DrawHeart
 						   
 	                       call DrawHeart2
@@ -2023,8 +2022,8 @@ RET
 	                       JMP  D_LANDONSTEP
 
 	D_LANDONSTEP2:         call waitForNewVR
-	;call delay2  
-	                       call DrawBackGround                 	;;Remove the old position
+	;                       call delay2
+	                       call DrawBackGround                    	;;Remove the old position
 	                       call DrawHeart
 						   
 	                       call DrawHeart2
@@ -2043,7 +2042,6 @@ RET
 
 DOG_CharacterGravity Endp
 	;
-
 
 ;-------------------------------DRAWING HEALTH BAR PROCEDURE-----------------------------------
 
