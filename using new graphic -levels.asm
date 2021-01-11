@@ -258,6 +258,9 @@
 	cont_LEVEL						db 			'Press 1 to continue to next level.','$'
 	THE_WINNER_IN_LVL                         db         'THE WINNER IN THIS LEVEL IS ','$'
 	WINNER							db		0
+	level1_str						db					'LEVEL 1'
+	level2_str						db					'LEVEL 2'
+	level3_str						db					'LEVEL 3'
 ;----------------------------------- MAIN MENU ----------------------------------------------------------------
 	MSG1                      DB  '*        ANGRY PETS        *',10,13,'$'
 	MSG2                      DB  '--------------------------------------',10,13,'$'
@@ -1449,7 +1452,7 @@ DrawNames PROC
 	push DI
 	mov al, 0
 	mov bl, 0
-	mov dl,0h
+	mov dl,2h
     mov dh,2h
     mov bh,0
     mov ah,02h
@@ -1459,13 +1462,13 @@ DrawNames PROC
 	mov SI, offset FIRST_PLAYER_NAME+2
 drawname1:
 	mov al, [SI]
-	mov bl, 03
+	mov bl, 0eh
 	mov ah,0eh
 	int 10h
 	inc si
 loop drawname1
 
-	mov dl,30
+	mov dl,26
     mov dh,2h
     mov bh,0
     mov ah,02h
@@ -1475,11 +1478,39 @@ loop drawname1
 	mov SI, offset SECOND_PLAYER_NAME+2
 drawname2:
 	mov al, [SI]
-	mov bl, 03
+	mov bl, 0eh
 	mov ah,0eh
 	int 10h
 	inc si
 loop drawname2
+
+	
+	mov dl,17
+    mov dh,1h
+    mov bh,0
+    mov ah,02h
+    int 10h
+	mov cx,0
+	mov cl, 7
+	cmp current_level, 2
+	je lvl2
+	cmp current_level, 3
+	je lvl3
+	lvl1:
+	mov SI, offset level1_str
+	jmp drawlevel
+	lvl2:
+	mov SI, offset level2_str
+	jmp drawlevel
+	lvl3:
+	mov SI, offset level3_str
+drawlevel:
+	mov al, [SI]
+	mov bl, 0ah
+	mov ah,0eh
+	int 10h
+	inc si
+loop drawlevel
 
 	mov dl,12 ;column
 	mov DI, offset cat_score+2
