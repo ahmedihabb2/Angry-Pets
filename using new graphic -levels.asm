@@ -49,6 +49,7 @@
 	Dog_Took_Dub_Power		  DB 0				;tbz
 	Dog_Took_Coin			  DB 0				;tbz
 	Dog_Took_Shield			  DB 0				;tbz
+	no_power_ups			  DW 5
 	;############################################ADDDDEEEDDDD##########################################;
 	ChesonPowerUp             DW  ?
 	ChesonPowerUp2            DW  ?
@@ -111,6 +112,20 @@
                             DB 14, 43, 43, 14, 14, 6, 6, 43, 43, 43, 14, 14, 14, 14, 43, 43, 43, 43, 14, 14, 6, 6, 6, 43, 43, 43, 43, 43, 43, 43, 43, 43, 14, 14, 14, 16, 6, 6, 6, 43 
                             DB 43, 43, 43, 43, 43, 43, 14, 14, 14, 16, 16, 16, 6, 6, 6, 43, 14, 14, 14, 14, 14, 14, 14, 16, 16
                             ​
+	medicine				DB 16, 16, 19, 19, 229, 26, 28, 28, 25, 20, 19, 19, 16, 16, 16, 16, 18, 20, 25, 29, 28, 26, 26, 27, 29, 25, 20, 18, 16, 16, 16, 232, 25, 29, 26, 143, 143, 143, 143, 72 
+							DB 28, 25, 21, 18, 16, 18, 21, 29, 165, 143, 143, 166, 143, 143, 164, 142, 29, 25, 18, 16, 19, 27, 25, 142, 143, 143, 143, 143, 142, 71, 143, 72, 28, 20, 16, 22, 30, 143, 143, 143 
+							DB 143, 143, 142, 143, 144, 144, 144, 27, 23, 16, 23, 30, 143, 143, 143, 144, 144, 144, 144, 144, 217, 144, 26, 25, 16, 22, 30, 143, 143, 144, 144, 121, 121, 194, 144, 23, 24, 29, 23, 16 
+							DB 229, 29, 23, 144, 121, 121, 170, 171, 23, 24, 28, 28, 29, 19, 16, 18, 24, 29, 22, 170, 23, 28, 29, 30, 30, 29, 26, 25, 18, 16, 18, 19, 26, 29, 27, 27, 29, 30, 30, 30 
+							DB 28, 28, 27, 229, 18, 16, 18, 21, 24, 28, 29, 30, 30, 29, 28, 30, 28, 22, 20, 18, 16, 16, 18, 19, 22, 24, 26, 28, 21, 30, 28, 161, 136, 136, 18, 16, 16, 16, 18, 229 
+							DB 23, 20, 20, 229, 25, 161, 137, 209, 114, 18, 16, 16, 16, 16, 16, 16, 18, 18, 16, 21, 207, 114, 114, 208, 18
+		
+	money 					DB 16, 16, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 16, 16, 16, 140, 42, 42, 42, 42, 43, 43, 43, 42, 42, 42, 42, 6, 16, 140, 6, 42, 42, 43, 43, 43, 43, 43, 43 
+							DB 43, 42, 42, 6, 6, 6, 42, 42, 43, 43, 43, 6, 139, 6, 43, 43, 43, 42, 42, 6, 6, 42, 42, 43, 43, 43, 140, 43, 6, 43, 43, 43, 42, 42, 6, 6, 42, 42, 43, 43 
+							DB 43, 43, 140, 43, 43, 43, 43, 42, 42, 42, 6, 42, 42, 43, 43, 43, 42, 43, 140, 43, 43, 43, 42, 43, 6, 6, 6, 42, 42, 43, 43, 140, 140, 140, 43, 43, 42, 43, 6, 6 
+							DB 16, 6, 42, 42, 43, 43, 43, 6, 43, 43, 43, 43, 42, 6, 16, 16, 139, 6, 42, 42, 42, 43, 43, 43, 43, 43, 42, 6, 6, 16, 16, 16, 16, 6, 6, 42, 42, 42, 43, 42 
+							DB 42, 6, 16, 16, 16, 16, 16, 16, 16, 6, 6, 6, 6, 6, 6, 6, 16, 16, 16, 16, 16, 16, 16, 16, 6, 6, 42, 43, 42, 6, 6, 16, 16, 16, 16, 16, 16, 16, 6, 6 
+							DB 42, 43, 43, 43, 42, 6, 6, 16, 16, 16, 16, 16, 16, 6, 6, 6, 6, 6, 6, 6, 6, 6, 16, 16, 16
+	
 	COIN					DB 6, 6, 42, 43, 43, 43, 14, 14, 6, 43, 43, 42, 42, 43, 43, 14, 42, 43, 42, 43, 43, 43, 43, 14, 42, 43, 42, 43, 43, 14, 43, 14, 42, 43, 42, 43, 43, 14, 43, 14 
  							DB 6, 43, 42, 43, 43, 43, 43, 14, 6, 43, 43, 43, 43, 43, 43, 14, 6, 6, 43, 43, 43, 14, 14, 14
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2693,13 +2708,13 @@ mov isJumping , 0
 	TEMP_READKEY:          JMP ReadKey
 	;;;;;;;;;;;;;;;;;;;;;;;;;;; CAT MOVEMENT LABLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	MoveLeft:              
-	                       cmp  xCoord, 0
+	                       cmp  xCoord, 10
 	                       jle  ReadKey
 						   mov  ax, catSpeed
 	                       sub  xCoord,ax
 	                       jmp  kamel_darb
 	                       
-	MoveRight:             cmp  xCoord, 283
+	MoveRight:             cmp  xCoord, 281
 	                       jae  ReadKey
 	                       mov  ax, catSpeed
 	                       add  xCoord,ax
@@ -2725,7 +2740,7 @@ mov isJumping , 0
 	                       jmp  kamel_ball
 	                       jmp  ReadKey
 
-	dog_MoveRight:         cmp  xd, 283
+	dog_MoveRight:         cmp  xd, 281
 
 	                       jae  TEMP_READKEY
 	                       mov  ax, dogSpeed
@@ -2824,7 +2839,10 @@ DrawHeart proc
 				je catTook_Shield
 				cmp ChesonPowerUp, 4
 				je catTook_coin
-                
+                cmp ChesonPowerUp, 5
+				je catTook_money
+				cmp ChesonPowerUp, 6
+				je catTook_medicine
                 jmp Anywaycat
 				
 				catTook_HeartDown:							
@@ -2847,6 +2865,21 @@ DrawHeart proc
 							add [di],ah 
 							CALL DrawNames	
                             jmp Anywaycat
+				catTook_money:
+							mov DI, offset cat_score+1
+							mov cx,5
+							rich:
+							mov ah, 1
+							add [di],ah 
+							CALL DrawNames	
+							loop rich
+                            jmp Anywaycat
+				catTook_medicine:
+							cmp catSpeed, 10
+							jge maxSpeed
+							add catSpeed, 1
+							maxSpeed:
+							jmp Anywaycat
 				Anywaycat:
 						   mov  CurrentPowerUp, 0
 	                       call GenerateRandomNumber
@@ -2865,6 +2898,11 @@ DrawHeart proc
 				je dogTook_Shield
 				cmp ChesonPowerUp, 4
 				je dogTook_coin
+				cmp ChesonPowerUp, 5
+				je dogTook_money
+				cmp ChesonPowerUp, 6
+				je dogTook_medicine
+                
                 jmp Anywaydog
 				
 				dogTook_HeartDown:							
@@ -2887,6 +2925,21 @@ DrawHeart proc
 							add [di],ah 
 							CALL DrawNames	
                             jmp Anywaydog
+				dogTook_money:
+							mov DI, offset dog_score+1
+							mov cx,5
+							richdog:
+							mov ah, 1
+							add [di],ah 
+							CALL DrawNames	
+							loop richdog
+                            jmp Anywaydog
+				dogTook_medicine:
+							cmp dogSpeed, 10
+							jge maxdogSpeed
+							add dogSpeed, 1
+							maxdogSpeed:
+							jmp Anywaydog
 				Anywaydog:
 						   mov  CurrentPowerUp, 0
 	                       call GenerateRandomNumber
@@ -2894,7 +2947,7 @@ DrawHeart proc
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	DidnotTake:            
 	                       cmp  draw_PowerUp, 0
-	                       jz   ENDINGHeart
+	                       jz   middleEnd
 							mov al,0
 							mov bx ,0
 
@@ -2911,6 +2964,10 @@ DrawHeart proc
 	                       jz   shieldDraw
 	                       CMP  ChesonPowerUp, 4
 	                       jz   SpeedUpDraw
+						   CMP  ChesonPowerUp, 5
+	                       jz   MoneyDraw
+						   CMP  ChesonPowerUp, 6
+	                       jz   MedDraw
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	RedHeart:              mov  DI, offset heart_img
 	                       jmp  STARTDRAWING
@@ -2923,7 +2980,13 @@ DrawHeart proc
 	                       jmp  STARTDRAWING
 	SpeedUpDraw:           mov  DI, offset SpeedUp
 	                       jmp  STARTDRAWING
-                        
+	MoneyDraw:			   mov  DI, offset money
+	                       jmp  STARTDRAWING
+	MedDraw:			   mov  DI, offset medicine
+	                       jmp  STARTDRAWING
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	middleEnd:			jmp ENDINGHeart
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	STARTDRAWING:          jmp  StartHeart
                      
 	Drawalb:               
@@ -3004,6 +3067,11 @@ DrawHeart2 proc
 				je catTook_Shield2
 				cmp ChesonPowerUp2, 4
 				je catTook_coin2
+				cmp ChesonPowerUp2, 5
+				je catTook_money2
+				cmp ChesonPowerUp2, 6
+				je catTook_medicine2
+                
                 jmp Anyway2
 				
 				catTook_HeartDown2:							
@@ -3027,6 +3095,21 @@ DrawHeart2 proc
 							add [di],ah 
 							CALL DrawNames	
                             jmp Anyway2
+				catTook_money2:
+							mov DI, offset cat_score+1
+							mov cx,5
+							rich2:
+							mov ah, 1
+							add [di],ah 
+							CALL DrawNames	
+							loop rich2
+                            jmp Anyway2
+				catTook_medicine2:
+							cmp catSpeed, 10
+							jge maxSpeed2
+							add catSpeed, 1
+							maxSpeed2:
+							jmp Anyway2
 				Anyway2:
 						   mov  CurrentPowerUp, 1
 	                       call GenerateRandomNumber
@@ -3047,6 +3130,10 @@ DrawHeart2 proc
 				je dogTook_Shield2
 				cmp ChesonPowerUp2, 4
 				je dogTook_coin2
+				cmp ChesonPowerUp2, 5
+				je dogTook_money2
+				cmp ChesonPowerUp2, 6
+				je dogTook_medicine2
                 jmp Anywaydog2
 				
 				dogTook_HeartDown2:							
@@ -3069,6 +3156,21 @@ DrawHeart2 proc
 							add [DI],ah 
 							call DrawNames	
                             jmp Anywaydog2
+				dogTook_money2:
+							mov DI, offset dog_score+1
+							mov cx,5
+							richdog2:
+							mov ah, 1
+							add [di],ah 
+							CALL DrawNames	
+							loop richdog2
+                            jmp Anywaydog2
+				dogTook_medicine2:
+							cmp dogSpeed, 10
+							jge maxdogSpeed2
+							add dogSpeed, 1
+							maxdogSpeed2:
+							jmp Anywaydog2
 				Anywaydog2:
 						   mov  CurrentPowerUp, 1
 	                       call GenerateRandomNumber
@@ -3077,7 +3179,7 @@ DrawHeart2 proc
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	DidnotTake2:           
 	                       cmp  draw_PowerUp2, 0
-	                       jz   ENDINGHeart2
+	                       jz   middleEnd2
                         
 	                       MOV  AH,0Bh
 	                       MOV  CX, heart_W
@@ -3092,6 +3194,10 @@ DrawHeart2 proc
 	                       jz   shieldDraw2
 	                       CMP  ChesonPowerUp2, 4
 	                       jz   SpeedUpDraw2
+						   CMP  ChesonPowerUp2, 5
+	                       jz   MoneyDraw2
+						   CMP  ChesonPowerUp2, 6
+	                       jz   MedDraw2
 	RedHeart2:             mov  DI, offset heart_img
 	                       jmp  STARTDRAWING2
 
@@ -3103,6 +3209,13 @@ DrawHeart2 proc
 	                       jmp  STARTDRAWING2
 	SpeedUpDraw2:          mov  DI, offset SpeedUp
 	                       jmp  STARTDRAWING2
+	MoneyDraw2:			   mov  DI, offset money
+	                       jmp  STARTDRAWING2
+	MedDraw2:			   mov  DI, offset medicine
+	                       jmp  STARTDRAWING2
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	middleEnd2:			jmp ENDINGHeart2
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                         
 	STARTDRAWING2:         jmp  StartHeart2
                         
@@ -3293,7 +3406,7 @@ GenerateRandomPowerUp proc
 
 	                       xor  dx,dx
 
-	                       mov  cx,5
+	                       mov  cx,no_power_ups
 
 	                       div  cx                                	; here dx contains the remainder of the division - from 0 to 4
 	                       mov  ChesonPowerUp, dx
@@ -3311,7 +3424,7 @@ GenerateRandomPowerUp2 proc
 
 	                       xor  dx,dx
 
-	                       mov  cx,5
+	                       mov  cx,no_power_ups
 
 	                       div  cx                                	; here dx contains the remainder of the division - from 0 to 4
 	                       mov  ChesonPowerUp2, dx
@@ -3539,6 +3652,7 @@ OVER:
 					mov  Dog_Took_Shield , 0
 					mov isFalling ,  0
 					mov isJumping, 0
+					mov no_power_ups, 7
 					call STARTGAME
 					jmp khlaaas
 
@@ -3741,7 +3855,7 @@ AFTERLEVEL Endp
 					mov [di],al
 					inc di
 					loop reset_Score
-					
+					mov no_power_ups, 5
 					call MAINMENU
 					call STARTINGSCREEN
 					jmp end_the_game
