@@ -1468,13 +1468,16 @@ drawname1:
 	inc si
 loop drawname1
 
-	mov dl,26
+	
+	mov cx,0
+	mov cl, SECOND_PLAYER_NAME[1]
+	
+	mov dl,38
+	sub dl, cl
     mov dh,2h
     mov bh,0
     mov ah,02h
     int 10h
-	mov cx,0
-	mov cl, SECOND_PLAYER_NAME[1]
 	mov SI, offset SECOND_PLAYER_NAME+2
 drawname2:
 	mov al, [SI]
