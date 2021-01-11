@@ -2,15 +2,24 @@
 .STACK 64
 .DATA
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	cat_W                     equ 25
+	cat_W                     equ 25    
 	cat_H                     equ 25
 	heart_W                   equ 15
 	heart_H                   equ 15
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Levels;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	player1_winings			DB 	0
+	player2_winings			DB 	0
+	current_level			DB  1
+	dogHitPower				DB	1
+	catHitPower				DB  1
+	catSpeed                DW  6
+	dogSpeed				DW  6   
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;SCORE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   cat_score                 DB 30h, 30h,  30h ;10**2*element[0]+10**1*element[1]+1*element[2]
+    cat_score                  DB 30h, 30h,  30h  ;10**2*element[0]+10**1*element[1]+1*element[2]   
 	
-    dog_score                 DB 30h, 30h, 30h
-	
+    dog_score                 DB 30h, 30h, 30h                                                    
+	finalscore_cat				DW  0
+	finalscore_dog				DW  0
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PowerUps;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	PowerUpsYpos              DW  100, 64                                                                                                                                                                                         	;100 for step 1, 2 ; 64 for step 3
 	steps_to_draw_powerUps    DW  3, 1, 2, 3                                                                                                                                                                                      	;if 0 then nothing will be drawn
@@ -28,18 +37,18 @@
 	draw_PowerUp              DB  1
 	draw_PowerUp2             DB  1
 	RandomNums                DW  0, 0
-	Cat_Took_PowerUp		  DB 0
-	Cat_Took_HeartUp		  DB 0
-	Cat_Took_HeartDown		  DB 0
-	Cat_Took_Dub_Power		  DB 0
-	Cat_Took_Coin			  DB 0
-	Cat_Took_Shield			  DB 0
-    Dog_Took_PowerUp		  DB 0
-	Dog_Took_HeartUp		  DB 0
-	Dog_Took_HeartDown		  DB 0
-	Dog_Took_Dub_Power		  DB 0
-	Dog_Took_Coin			  DB 0
-	Dog_Took_Shield			  DB 0
+	Cat_Took_PowerUp		  DB 0				;tbz
+	Cat_Took_HeartUp		  DB 0				;tbz
+	Cat_Took_HeartDown		  DB 0				;tbz
+	Cat_Took_Dub_Power		  DB 0				;tbz
+	Cat_Took_Coin			  DB 0				;tbz
+	Cat_Took_Shield			  DB 0				;tbz
+    Dog_Took_PowerUp		  DB 0				;tbz
+	Dog_Took_HeartUp		  DB 0				;tbz
+	Dog_Took_HeartDown		  DB 0				;tbz
+	Dog_Took_Dub_Power		  DB 0				;tbz
+	Dog_Took_Coin			  DB 0				;tbz
+	Dog_Took_Shield			  DB 0				;tbz
 	;############################################ADDDDEEEDDDD##########################################;
 	ChesonPowerUp             DW  ?
 	ChesonPowerUp2            DW  ?
@@ -223,13 +232,17 @@
 	countINC2                 dw  0     
 	
 	;-----------------------------------GAME OVER ---------------------------------------------------------
-	THE_WINNER                         db         'THE WINNER IS ','$'
+	THE_WINNER                         db         'THE Final WINNER IS ','$'
 	GAME_OVER_STR                      db         'GAME OVER ...','$'
 	ANGRY_PETS                         db         '<<<<<<< ANGRY PETS >>>>>>>','$'
 	FINALMSG_MENU                      db         'Press 1 to return to the main menu','$'                        
 	FINALMSG_ESC                       db         'Press ESC to end the game','$'                        
-                                                                                                                                                                                          	;for only doubling the increasing value of health of player 1
-
+    
+	;----------------------------------LEVEL UP!-----------------------------------------------------------                                                                                                                                                                                      	;for only doubling the increasing value of health of player 1
+	LEVEL_UP                         db         ' ^_^     LEVEL UP!     ^_^','$'
+	cont_LEVEL						db 			'Press 1 to continue to next level.','$'
+	THE_WINNER_IN_LVL                         db         'THE WINNER IN THIS LEVEL IS ','$'
+	WINNER							db		0
 ;----------------------------------- MAIN MENU ----------------------------------------------------------------
 	MSG1                      DB  '*        ANGRY PETS        *',10,13,'$'
 	MSG2                      DB  '--------------------------------------',10,13,'$'
@@ -2049,6 +2062,7 @@ Draw_Health_Bar PROC
 
 ;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Decrease health
 ;------------------- check whether the 1st player has been hit?
+				push cx
                  cmp Player1_DecHealth,0 ; no hits
                  je SecondPlayerTest   
 
@@ -2056,7 +2070,7 @@ Draw_Health_Bar PROC
                 sub Player1_Health_cx,1
                 cmp Player1_Health_cx, 23   ; check for the current position if it reaches the end then this is the loser
                 ja decHealth1              
-                call GAME_OVER     
+                call AFTERLEVEL     
   
                 
  decHealth1:
@@ -2081,7 +2095,7 @@ Draw_Health_Bar PROC
 ;------------------- check again whether the 1st player is the loser now?
                 cmp Player1_Health_cx, 23
                 ja SecondPlayerTest
-                call GAME_OVER 
+                call AFTERLEVEL 
    
 ;------------------------------- check whether the 2nd player has been hit? ----------------------
 SecondPlayerTest:
@@ -2093,7 +2107,7 @@ SecondPlayerTest:
                 sub Player2_Health_cx,1
                 cmp Player2_Health_cx, 253
                 ja decHealth2
-                call GAME_OVER 
+                call AFTERLEVEL 
                  
 
  decHealth2:
@@ -2119,7 +2133,7 @@ SecondPlayerTest:
 ;------------------- check again whether the 2nd player is the loser?
                 cmp Player2_Health_cx, 253
                 ja CheckIncHealthP1
-                call GAME_OVER
+                call AFTERLEVEL
 
 
 
@@ -2265,6 +2279,7 @@ FinishHealthBar:
              mov  Player1_DecHealth,0
              mov  Player1_IncHealth,0
              mov  Player2_IncHealth,0
+			 pop cx
 RET
 
 Draw_Health_Bar ENDP
@@ -2489,9 +2504,12 @@ DogHitCat proc
 	;;;;;;;;;;;;;;;;; hit effect decrease health of the dog  ;;;;;;;;;;;;;;;;
 	decHealthCatDone:      CMP Cat_Took_Shield,1
                            je finish2
-                           
-	                       mov  Player1_DecHealth,1               	;dec health of dog
+						   mov cx,0
+                           mov cl, dogHitPower
+	            hitpowerdog:
+				           mov  Player1_DecHealth,1               	;dec health of dog
 	                       call Draw_Health_Bar
+						   loop hitpowerdog
 						   mov DI, offset dog_score+1
 							mov ah, 1
 							add [di],ah 
@@ -2602,8 +2620,12 @@ CatHitDog proc
 	;;;;;;;;;;;;;;;;; hit effect decrease health of the dog  ;;;;;;;;;;;;;;;;
 	decHealthDogDone:      cmp Dog_Took_Shield, 1
                            je finish
-	                       mov  Player2_DecHealth,1               	;dec health of dog
+						    mov cx,0
+                           mov cl, catHitPower
+	                hitpower:
+					       mov  Player2_DecHealth,1               	;dec health of dog
 	                       call Draw_Health_Bar
+						   loop hitpower
 						   mov DI, offset cat_score+1
 						   mov ah, 1
 						   add [di],ah 
@@ -2673,12 +2695,14 @@ mov isJumping , 0
 	MoveLeft:              
 	                       cmp  xCoord, 0
 	                       jle  ReadKey
-	                       sub  xCoord,6
+						   mov  ax, catSpeed
+	                       sub  xCoord,ax
 	                       jmp  kamel_darb
 	                       
-	MoveRight:             cmp  xCoord, 292
-	                       jge  ReadKey
-	                       add  xCoord , 6
+	MoveRight:             cmp  xCoord, 283
+	                       jae  ReadKey
+	                       mov  ax, catSpeed
+	                       add  xCoord,ax
 	                       jmp  kamel_darb
 	                      
 	JUMPUP:                mov isJumping , 1
@@ -2694,16 +2718,18 @@ mov isJumping , 0
 	
 	;;;;;;;;;;;;;;;;;;;;;; DOG MOVEMENT LABLES ;;;;;;;;;;;;;;;;;;;;;
 	dog_MoveLeft:          
-	                       cmp  xd, 3
+	                       cmp  xd, 10
 	                       jle  ReadKey
-	                       sub  xd,6
+	                       mov  ax, dogSpeed
+	                       sub  xd,ax
 	                       jmp  kamel_ball
 	                       jmp  ReadKey
 
-	dog_MoveRight:         cmp  xd, 284
+	dog_MoveRight:         cmp  xd, 283
 
 	                       jae  TEMP_READKEY
-	                       add  xd , 6
+	                       mov  ax, dogSpeed
+	                       add  xd,ax
 	                       jmp  kamel_ball
 	                       jmp  ReadKey
 	dog_JUMPUP:            cmp yd ,70
@@ -3291,7 +3317,235 @@ GenerateRandomPowerUp2 proc
 	                       mov  ChesonPowerUp2, dx
 	                       ret
 GenerateRandomPowerUp2 Endp
+;---------------------------------------After Levels PROC -------------------------------------------------------------
+AFTERLEVEL PROC
+  
+					mov  Player2_DecHealth,0
+					mov  Player1_DecHealth,0
+					mov  Player1_IncHealth,0
+					mov  Player2_IncHealth,0
+					mov HealthBarDrawn,0
 
+				;clear
+					mov ax,0600h
+					mov bh,07
+					mov cx,0
+					mov dx,184FH
+					int 10h 
+
+				
+
+					; graphics mode
+					mov ah,0
+					mov al,13h
+					int 10h
+
+					; move cursor
+					mov dl, 7 ; column. 
+					mov dh, 3 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h
+
+					
+					;Set the cursor 
+					mov dl, 7 ; column. 
+					mov dh, 4; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h
+					
+					; Display the level up message  
+					mov ah,09
+					mov dh,0
+					mov dx, offset LEVEL_UP
+					int 21h      
+
+
+
+					;Set the cursor 
+					mov dl, 5 ; column. 
+					mov dh, 10 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h
+					
+					; Display the winner 
+					mov ah,09
+					mov dh,0
+					mov dx, offset THE_WINNER_IN_LVL
+					int 21h       
+
+					;Set the cursor 
+					mov dl, 17 ; column. 
+					mov dh, 13 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h
+
+
+					cmp Player2_Health_cx, 253  ; Check this health if it reaches the minimum then player 2(dog) is the loser
+					je LVL_LOSER_DOG
+
+					cmp Player1_Health_cx, 23   ; Check this health if it reaches the minimum then player 1(cat) is the loser 
+					je LVL_LOSER_CAT
+
+					
+					LVL_LOSER_DOG:  ; then player 1 is the winner
+					mov ah,09
+					mov dh,0
+					mov dx, offset FIRST_PLAYER_NAME+2
+					int 21h 
+					inc catHitPower
+					inc player1_winings
+					cmp current_level, 2
+					je  LEVEL2
+					cmp current_level, 3
+					je  LEVEL3
+					jmp EndOfTheLEVEL 
+
+					LVL_LOSER_CAT:   ; then player 2 is the winner
+					mov ah,09
+					mov dh,0
+					mov dx, offset SECOND_PLAYER_NAME+2
+					int 21h 
+					inc dogHitPower
+					inc player2_winings
+					cmp current_level, 2
+					je  LEVEL2
+					cmp current_level, 3
+					je  LEVEL3
+					jmp EndOfTheLEVEL 
+LEVEL2:
+			cmp player1_winings, 0
+			je LEVEL2_GameOver_win2					;player 2 has won twice and player 2 is the winner
+			cmp player2_winings, 0
+			je LEVEL2_GameOver_win1					;player 1 has won twice and player 1 is the winner
+			call calc_score
+			mov ax, finalscore_dog					;compare dog and cat scores(if equal then up to level 3, else the higher score is the winner)
+			mov bx,finalscore_cat
+			cmp ax, bx
+			je EndOfTheLEVEL						;move to the next level
+			cmp ax, bx
+			jg LEVEL2_GameOver_win2					;the dog is the winner
+			jmp LEVEL2_GameOver_win1				;the cat is the winner
+			
+
+
+LEVEL2_GameOver_win1:
+			mov winner,1
+			mov cx, 3500
+			pausescreen1:
+			      
+			loop pausescreen1
+			CALL GAME_OVER
+			jmp khlaaas
+LEVEL2_GameOver_win2:
+			mov winner,2
+			mov cx, 3500
+			pausescreen2:
+			     
+			loop pausescreen2
+			CALL GAME_OVER
+			jmp khlaaas
+
+
+
+;------------------In Case They Moved TO level 3---------------;
+LEVEL3:		cmp player2_winings, 2
+			je winner_2
+winner_1:	mov winner, 1
+			jmp			OVER	
+winner_2:	mov winner, 2
+OVER:
+			mov cx, 700
+			pausescreen3:      
+			
+			loop pausescreen3
+			CALL GAME_OVER
+			jmp khlaaas
+
+
+
+
+
+			EndOfTheLEVEL:
+
+					; move the cursor to the end of the screen
+					mov dl, 0; column. 
+					mov dh, 19 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h 
+					
+					mov cx,40
+					Printdash:
+					mov ah,2 
+					mov dl,'-'
+					int 21h 
+					loop Printdash 
+
+					; move the cursor to the end of the screen
+					mov dl, 2 ; column. 
+					mov dh,  21 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h
+
+					; display final msg
+					mov ah,09
+					mov dh,0
+					mov dx, offset cont_LEVEL
+					int 21h 
+
+					; move the cursor
+					mov dl, 2 ; column. 
+					mov dh,  23 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h
+					
+					
+
+					player_press:
+					mov ah,0
+					int 16h
+					cmp ah, 02
+					jz continue_to_nextlevel 
+					
+					jmp player_press
+
+					continue_to_nextlevel: 
+					add catSpeed, 2
+					add dogSpeed, 2
+					mov direction_of_hitting  , 1
+					mov ISFIRSTPLAYER, 1
+					mov CurrentScore, 0
+					inc current_level
+					MOV ISVALID , 1
+					MOV start_hitting ,0
+					MOV start_balling , 0
+					mov Cat_Took_PowerUp, 0
+					mov Cat_Took_HeartUp, 0
+					mov  Cat_Took_HeartDown , 0
+					mov Cat_Took_Dub_Power  , 0
+					mov Cat_Took_Coin  , 0
+					mov  Cat_Took_Shield , 0
+					mov  Dog_Took_PowerUp , 0
+					mov   Dog_Took_HeartUp, 0
+					mov   Dog_Took_HeartDown, 0
+					mov  Dog_Took_Dub_Power , 0
+					mov  Dog_Took_Coin , 0
+					mov  Dog_Took_Shield , 0
+					mov isFalling ,  0
+					mov isJumping, 0
+					call STARTGAME
+					jmp khlaaas
+
+khlaaas:
+	
+ret
+AFTERLEVEL Endp
 ;--------------------------------------	GAME OVER PROCEDURE------------------------------------------------------------
  GAME_OVER PROC
   
@@ -3345,7 +3599,7 @@ GenerateRandomPowerUp2 Endp
 
 					;Set the cursor 
 					mov dl, 11 ; column. 
-					mov dh, 12 ; row. 
+					mov dh, 10 ; row. 
 					mov bx,0
 					mov ah, 02h
 					int 10h
@@ -3356,11 +3610,18 @@ GenerateRandomPowerUp2 Endp
 					mov dx, offset THE_WINNER
 					int 21h       
 
+					;Set the cursor 
+					mov dl, 17 ; column. 
+					mov dh, 13 ; row. 
+					mov bx,0
+					mov ah, 02h
+					int 10h
 
-					cmp Player2_Health_cx, 253  ; Check this health if it reaches the minimum then player 2 is the loser
+
+					cmp winner, 1  ; Check this health if the cat is the winner
 					je LOSER_DOG
 
-					cmp Player1_Health_cx, 23   ; Check this health if it reaches the minimum then player 1 is the loser 
+					cmp winner, 2   ; Check this health if the dog is the winner
 					je LOSER_CAT
 
 
@@ -3433,17 +3694,109 @@ GenerateRandomPowerUp2 Endp
 					jz end_the_game
 					jmp FINAL_PRESS
 
-					return_to_main_menu: 
-					MOV ISVALID , 1
-					MOV start_hitting ,0
-					MOV start_balling , 0
-					call MAINMENU
-					call STARTINGSCREEN
+					
 
 					end_the_game:
 					mov ah,4ch
+
 					int 21h
+					jmp IDWBEAPROGRAMMER
+
+					return_to_main_menu: 
+					;;;;;;;;;;resetting variables;;;;;;;;;
+					MOV ISVALID , 1
+					mov ISFIRSTPLAYER, 1
+					mov CurrentScore, 0
+					MOV start_hitting ,0
+					mov isFalling ,  0
+					mov isJumping, 0                                                                                                                                                                                              	; flag to indicate that cat hits the dog
+					mov direction_of_hitting  , 1
+					MOV start_balling , 0
+					mov Cat_Took_PowerUp, 0
+					mov Cat_Took_HeartUp, 0
+					mov Cat_Took_HeartDown , 0
+					mov Cat_Took_Dub_Power  , 0
+					mov Cat_Took_Coin  , 0
+					mov Cat_Took_Shield , 0
+					mov Dog_Took_PowerUp , 0
+					mov Dog_Took_HeartUp, 0
+					mov Dog_Took_HeartDown, 0
+					mov Dog_Took_Dub_Power , 0
+					mov Dog_Took_Coin , 0
+					mov Dog_Took_Shield , 0
+					mov player1_winings	,	0
+					mov player2_winings	,	0
+					mov current_level	, 1
+					mov dogHitPower		, 1
+					mov catHitPower		, 1
+					mov catSpeed         , 6
+					mov dogSpeed		, 6
+					mov winner,0
+					mov finalscore_cat, 0
+					mov finalscore_dog, 0
+					mov di, offset cat_score
+					mov cx, 6
+					reset_Score:
+					mov al,30h
+					mov [di],al
+					inc di
+					loop reset_Score
+					
+					call MAINMENU
+					call STARTINGSCREEN
+					jmp end_the_game
+IDWBEAPROGRAMMER:
+ret
 GAME_OVER Endp
+
+calc_score 	PROC
+;;;;;;;;;;;;;;;;for cat;;;;;;;;;;;;;;;;;;;;
+mov di, offset cat_score
+mov ax,0
+mov al, 100
+mov bl, [di]
+sub bl, 30h
+mul bl 
+mov finalscore_cat, ax
+mov ax,0
+inc di
+mov al, 10
+mov bl, [di]
+sub bl, 30h
+mul bl 
+add finalscore_cat, ax
+inc di
+mov ax,0
+mov bx,0
+mov bl, [di]
+sub bl, 30h
+add ax, bx
+add finalscore_cat, ax
+;;;;;;;;;;;;;;;;for dog;;;;;;;;;;;;;;;;;
+mov di, offset dog_score
+mov ax,0
+mov al, 100
+mov bl, [di]
+sub bl, 30h
+mul bl 
+mov finalscore_dog, ax
+inc di
+mov ax,10
+mov al, 10
+mov bl, [di]
+sub bl, 30h
+mul bl 
+add finalscore_dog, ax
+inc di
+mov ax,0
+mov bx,0
+mov bl, [di]
+sub bl, 30h
+add ax, bx
+add finalscore_dog, ax
+
+ret
+calc_score endp
 
 
 END MAIN
